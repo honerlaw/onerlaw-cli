@@ -1,0 +1,27 @@
+---
+description: Code styles specific to the cli in the infra package.
+globs: src/**/*
+alwaysApply: false
+---
+- the argument in commander should be equivalent to the command name.
+- all other parameters passed to a command should be an option in commander.
+- if the option is required, make sure to use the `requiredOption` function from commander.
+- if the option is optional, do not use a default value. If a value is required in some way to function it should instead be a required value.
+- Commands should only export one function, this should be a function that accepts the program as an argument. The function should then register the command with the program, as well as any optional or required arguments or options.
+- the `deploy.ts` file should only register the command with the program, logic should be placed in the command files instead.
+- if prompting the user for additional input, e.g. a confirmation message, make sure to use `consola` library.
+- There should only ever exist one function in per file.
+- Utilities should be placed in a utils folder.
+- Commands should be placed in there own folder and be re-exported through an `index.ts` file.
+- The entrypoint for the CLI tool should be an `index.ts` file.
+- All logging should be done through a custom logger that is defined in the utils folder. This logger should wrap consola.
+- The codebase should leverage esmodules, all files should end with the `.mts` extension. All imports should use the `.mjs` import extension.
+- Always use `type` over `interface`.
+- Ensure that the name of the export is identical to the filename. For instance, if there is a `export function fooBar() {}`, the file name should be `fooBar.mts`.
+- When using asynchronous operations, always use the `async` or `await` syntax.
+- Use `Promise`, `async`, and `await` instead of callbacks.
+- Use `try { } catch { }` when working with asynchronous operations. 
+- Do not use `undefined`, always use `null` instead.
+- No magic strings or numbers, make sure to move constants to a `constants.mts` file that is relative to their usage and name them.
+- When there is usage of `fs`, use `node:fs/promises` instead.
+- Never use synchronous operations when an asynchronous option exists.

@@ -1,0 +1,38 @@
+{
+  "name": "@onerlaw/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.mjs",
+  "bin": {
+    "@onerlaw/cli": "dist/index.mjs"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "start": "node dist/index.mjs",
+    "lint": "eslint src/**/* --fix",
+    "format": "prettier --write src/**/* && terraform fmt -recursive",
+    "lint:check": "eslint src/**/*",
+    "format:check": "prettier --check src/**/*"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "consola": "^3.4.2",
+    "execa": "^9.6.0"
+  }
+}

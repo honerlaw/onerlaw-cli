@@ -1,0 +1,78 @@
+import { logger } from './logger.mjs'
+import { consola } from 'consola'
+
+/**
+ * Prompt user for confirmation using consola
+ */
+export async function confirm(
+  message: string,
+  defaultAnswer = false
+): Promise<boolean> {
+  const defaultText = defaultAnswer ? 'Y/n' : 'y/N'
+  const promptMessage = `${message} (${defaultText})`
+
+  try {
+    const answer = await consola.prompt(promptMessage, {
+      type: 'confirm',
+      default: defaultAnswer,
+    })
+
+    return answer as boolean
+  } catch {
+    // Fallback to default if user cancels
+    return defaultAnswer
+  }
+}
+
+/**
+ * Prompt user for input using consola
+ */
+export async function input(
+  message: string,
+  defaultValue?: string
+): Promise<string> {
+  const promptMessage = defaultValue ? `${message} (${defaultValue})` : message
+
+  try {
+    const answer = await consola.prompt(promptMessage, {
+      type: 'text',
+      default: defaultValue,
+    })
+
+    return answer as string
+  } catch {
+    // Fallback to default if user cancels
+    return defaultValue || ''
+  }
+}
+
+/**
+ * Prompt user to select from a list of options
+ */
+export async function select<T>(
+  message: string,
+  choices: Array<{ name: string; value: T; description?: string }>,
+  defaultIndex = 0
+): Promise<T> {
+  logger.info(message)
+
+  const options = choices.map((choice, index) => ({
+    label: choice.name,
+    value: index.toString(),
+    hint: choice.description,
+  }))
+
+  try {
+    const answer = await consola.prompt('Select an option:', {
+      type: 'select',
+      options: options,
+      default: defaultIndex.toString(),
+    })
+
+    const selectedIndex = parseInt(answer as string)
+    return choices[selectedIndex].value
+  } catch {
+    // Fallback to default if user cancels
+    return choices[defaultIndex].value
+  }
+}
