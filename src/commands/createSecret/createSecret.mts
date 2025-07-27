@@ -65,7 +65,7 @@ export function registerCreateSecretCommand(program: Command): void {
       'Name of the secret (without environment prefix)'
     )
     .requiredOption('-v, --secret-value <secret-value>', 'Value of the secret')
-    .addOption(ENVIRONMENT_OPTION)
+    .addOption(ENVIRONMENT_OPTION.makeOptionMandatory(true))
     .requiredOption(
       '-n, --environment-name <environment-name>',
       'Environment name'

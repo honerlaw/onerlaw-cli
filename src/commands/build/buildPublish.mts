@@ -9,7 +9,7 @@ export function registerBuildCommand(program: Command): void {
       'Build and publish Docker image to Google Container Registry (gcr.io)'
     )
     .requiredOption('-p, --project <project-id>', 'Google Cloud Project ID')
-    .addOption(ENVIRONMENT_OPTION)
+    .addOption(ENVIRONMENT_OPTION.makeOptionMandatory(true))
     .requiredOption('-n, --environment-name <name>', 'environment name')
     .option('-i, --image-name <name>', 'Docker image name')
     .option('-t, --tag <tag>', 'Docker image tag')

@@ -9,14 +9,11 @@ import {
 } from '../../utils/index.mjs'
 import { backendTemplate, tfvarsTemplate } from './templates/index.mjs'
 import { getImageFullyQualifiedName } from './getImageFullyQualifiedName.mjs'
+import { Config } from '@/config/index.mjs'
 
-export async function setupAction(
-  project: string,
-  environment: string,
-  environmentName: string,
-  databaseName: string | null = null,
-  databaseUser: string | null = null
-): Promise<void> {
+export async function setupAction(config: Config): Promise<void> {
+  const { project, environment, environmentName, database } = config
+
   logSuccess(`Setting up backend configuration for project: ${project}`)
   logSuccess(`Environment: ${environment}`)
 
@@ -36,12 +33,7 @@ export async function setupAction(
       environment,
       environmentName,
       await getImageFullyQualifiedName(project, environment, environmentName),
-      databaseName && databaseUser
-        ? {
-            name: databaseName,
-            user: databaseUser,
-          }
-        : null
+      database
     )
   )
   logSuccess(`Created ${tfvarsPath}...`)
