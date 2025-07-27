@@ -52,6 +52,8 @@ resource "google_sql_database_instance" "instance" {
       update_track = "stable"
     }
   }
+
+  deletion_protection = false
 }
 
 # Create the database

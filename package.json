@@ -6,6 +6,10 @@
   "bin": {
     "@onerlaw/cli": "dist/index.mjs"
   },
+  "files": [
+    "dist",
+    "terraform"
+  ],
   "scripts": {
     "test": "jest",
     "build": "tsc",
