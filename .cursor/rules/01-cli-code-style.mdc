@@ -10,7 +10,7 @@ alwaysApply: false
 - Commands should only export one function, this should be a function that accepts the program as an argument. The function should then register the command with the program, as well as any optional or required arguments or options.
 - the `deploy.ts` file should only register the command with the program, logic should be placed in the command files instead.
 - if prompting the user for additional input, e.g. a confirmation message, make sure to use `consola` library.
-- There should only ever exist one function in per file.
+- There should only every be one function in a file. If there is multiple function definitions, split it into multiple files.
 - Utilities should be placed in a utils folder.
 - Commands should be placed in there own folder and be re-exported through an `index.ts` file.
 - The entrypoint for the CLI tool should be an `index.ts` file.
@@ -25,3 +25,4 @@ alwaysApply: false
 - No magic strings or numbers, make sure to move constants to a `constants.mts` file that is relative to their usage and name them.
 - When there is usage of `fs`, use `node:fs/promises` instead.
 - Never use synchronous operations when an asynchronous option exists.
+- After changes, run the `npm run validate` script to ensure that everything builds and passes linting rules.

@@ -9,6 +9,8 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
+    "dev": "tsx src/index.mts",
+    "validate": "npm run build && npm run lint && npm run format",
     "start": "node dist/index.mjs",
     "lint": "eslint src/**/* --fix",
     "format": "prettier --write src/**/* && terraform fmt -recursive",
@@ -28,6 +30,7 @@
     "eslint-plugin-prettier": "^5.5.3",
     "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {

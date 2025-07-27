@@ -40,7 +40,7 @@ variable "database_version" {
   default     = "POSTGRES_15"
 }
 
-variable "networking_module" {
-  description = "The networking module"
-  type        = any
+variable "vpc_network_id" {
+  description = "The VPC network ID"
+  type        = string
 }

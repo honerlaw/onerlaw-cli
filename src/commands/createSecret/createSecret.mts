@@ -3,11 +3,10 @@ import {
   logSuccess,
   logWarning,
   logError,
-  logInfo,
   runCommand,
-  validateEnvironment,
 } from '../../utils/index.mjs'
 import { Command } from 'commander'
+import { ENVIRONMENT_OPTION } from '../../utils/options.mjs'
 
 type CreateSecretOptions = {
   project: string
@@ -49,12 +48,6 @@ async function createSecretAction(options: CreateSecretOptions): Promise<void> {
     )
 
     logSuccess(`Secret ${fullSecretName} created/updated successfully`)
-    logWarning('Next steps:')
-    logInfo('1. Run: tsx src/index.ts plan -e <environment>')
-    logInfo('2. Run: tsx src/index.ts apply -e <environment>')
-    logInfo(
-      `3. The secret will be available in Cloud Run as: ${fullSecretName}`
-    )
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     logError(`Failed to create/update secret: ${errorMessage}`)
@@ -72,10 +65,7 @@ export function registerCreateSecretCommand(program: Command): void {
       'Name of the secret (without environment prefix)'
     )
     .requiredOption('-v, --secret-value <secret-value>', 'Value of the secret')
-    .requiredOption(
-      '-e, --environment <environment>',
-      'Environment (dev, staging, prod)'
-    )
+    .addOption(ENVIRONMENT_OPTION)
     .requiredOption(
       '-n, --environment-name <environment-name>',
       'Environment name'
@@ -89,7 +79,6 @@ export function registerCreateSecretCommand(program: Command): void {
         environmentName: string
       }) => {
         try {
-          validateEnvironment(options.environment)
           await createSecretAction({
             project: options.project,
             secretName: options.secretName,

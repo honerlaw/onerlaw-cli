@@ -4,23 +4,15 @@ import { consola } from 'consola'
 /**
  * Prompt user for confirmation using consola
  */
-export async function confirm(
-  message: string,
-  defaultAnswer = false
-): Promise<boolean> {
-  const defaultText = defaultAnswer ? 'Y/n' : 'y/N'
-  const promptMessage = `${message} (${defaultText})`
-
+export async function confirm(message: string): Promise<boolean> {
   try {
-    const answer = await consola.prompt(promptMessage, {
+    const answer = await consola.prompt(message, {
       type: 'confirm',
-      default: defaultAnswer,
     })
 
     return answer as boolean
   } catch {
-    // Fallback to default if user cancels
-    return defaultAnswer
+    return false
   }
 }
 

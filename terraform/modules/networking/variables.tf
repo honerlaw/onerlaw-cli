@@ -17,11 +17,3 @@ variable "region" {
   description = "The Google Cloud region"
   type        = string
 }
-
-variable "prevent_networking_destruction" {
-  description = "Whether to prevent destruction of networking resources"
-  type        = bool
-  default     = false
-}
-
- 

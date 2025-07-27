@@ -18,8 +18,6 @@ terraform {
   # Backend configuration for storing state in Google Cloud Storage
   backend "gcs" {
     # These will be configured via backend.tfbackend config file (created by setup-backend command)
-    # bucket = "terraform-state-bucket"
-    # prefix = "terraform/state/${var.environment}"
   }
 }
 
@@ -72,11 +70,10 @@ resource "google_project_service" "required_apis" {
 module "networking" {
   source = "./modules/networking"
 
-  project_id                     = var.project_id
-  environment                    = var.environment
-  environment_name               = var.environment_name
-  region                         = var.region
-  prevent_networking_destruction = var.environment == "prod"
+  project_id       = var.project_id
+  environment      = var.environment
+  environment_name = var.environment_name
+  region           = var.region
 
   depends_on = [google_project_service.required_apis]
 }
@@ -85,13 +82,13 @@ module "networking" {
 module "cloud_sql" {
   source = "./modules/cloud-sql"
 
-  project_id        = var.project_id
-  environment       = var.environment
-  instance_name     = "${var.environment}-${var.environment_name}"
-  region            = var.region
-  database_name     = var.database_name
-  database_user     = var.database_user
-  networking_module = module.networking
+  project_id     = var.project_id
+  environment    = var.environment
+  instance_name  = "${var.environment}-${var.environment_name}"
+  region         = var.region
+  database_name  = var.database_name
+  database_user  = var.database_user
+  vpc_network_id = module.networking.vpc_network_id
 
   depends_on = [google_project_service.required_apis, module.networking]
 }

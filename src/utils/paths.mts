@@ -1,4 +1,5 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { checkFileExists } from './files.mjs'
 import { BACKEND_TF_FILE, TERRAFORM_TFVARS_FILE } from '@/constants.mjs'
 
@@ -8,10 +9,17 @@ type DirectoryContext = {
 }
 
 /**
+ * Get the current directory path for ES modules
+ */
+function getCurrentDir(): string {
+  return path.dirname(fileURLToPath(import.meta.url))
+}
+
+/**
  * Get the project root directory
  */
 export function getProjectRoot(): string {
-  return path.resolve(__dirname, '../..')
+  return path.resolve(getCurrentDir(), '../..')
 }
 
 /**
@@ -36,7 +44,7 @@ export function resolveFromTerraform(relativePath: string): string {
 }
 
 /**
- * Get the ${TERRAFORM_TFVARS_FILE} file path
+ * Get the terraform tfvars file path
  */
 export function getTfvarsPath(): string {
   return resolveFromTerraform(TERRAFORM_TFVARS_FILE)
@@ -100,7 +108,7 @@ export async function withTerraformDirectory<T>(
 }
 
 /**
- * Check if ${TERRAFORM_TFVARS_FILE} exists
+ * Check if terraform tfvars file exists
  */
 export function checkTfvarsExists(): boolean {
   return checkFileExists(getTfvarsPath())

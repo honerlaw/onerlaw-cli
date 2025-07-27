@@ -41,7 +41,7 @@ resource "google_sql_database_instance" "instance" {
 
     ip_configuration {
       ipv4_enabled                                  = false
-      private_network                               = var.networking_module.vpc_network_id
+      private_network                               = var.vpc_network_id
       ssl_mode                                      = "ENCRYPTED_ONLY"
       enable_private_path_for_google_cloud_services = true
     }
@@ -52,10 +52,6 @@ resource "google_sql_database_instance" "instance" {
       update_track = "stable"
     }
   }
-
-  deletion_protection = var.environment == "prod"
-
-  depends_on = [var.networking_module]
 }
 
 # Create the database

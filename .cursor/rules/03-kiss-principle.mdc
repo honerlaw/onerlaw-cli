@@ -1,0 +1,24 @@
+---
+description: KISS principle - Keep It Simple, Stupid. Focus on simplistic code over complex code.
+globs: **/*
+alwaysApply: true
+---
+- Prefer simple, readable code over clever or complex solutions.
+- Break down complex functions into smaller, focused functions with single responsibilities.
+- Avoid over-engineering solutions - solve the immediate problem, not every possible future scenario.
+- Use descriptive variable and function names that clearly express intent.
+- Prefer explicit code over implicit or "magic" behavior.
+- When choosing between multiple approaches, favor the simpler one that's easier to understand and maintain.
+- Avoid deep nesting - if you have more than 3 levels of nesting, consider refactoring.
+- Keep functions short and focused - if a function is longer than 20-30 lines, consider breaking it down.
+- Use early returns to reduce nesting and improve readability.
+- Prefer composition over inheritance when possible.
+- Avoid premature optimization - write clear, working code first, optimize only when needed.
+- Use built-in language features and standard library functions over custom implementations when possible.
+- Keep configuration simple and avoid unnecessary abstraction layers.
+- When adding new features, consider if they're actually needed or if existing functionality can be extended.
+- Prefer straightforward data structures over complex ones unless complexity provides clear benefits.
+- Write code that a junior developer can understand without extensive documentation.
+- Avoid "clever" one-liners that sacrifice readability for brevity.
+- Use meaningful comments to explain "why" not "what" - the code should be self-documenting for the "what".
+- When in doubt about design decisions, choose the option that makes the code easier to understand and maintain.
