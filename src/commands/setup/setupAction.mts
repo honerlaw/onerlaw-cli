@@ -2,10 +2,10 @@ import {
   logSuccess,
   getBackendConfigPath,
   getTfvarsPath,
-  writeFileSync,
   initializeTerraform,
   applyTerraform,
   createBucket,
+  writeFile,
 } from '../../utils/index.mjs'
 import { backendTemplate } from './backendTemplate.mjs'
 import { tfvarsTemplate } from './tfvarsTemplate.mjs'
@@ -21,14 +21,14 @@ export async function setupAction(
 
   // create the backend file to be used
   const backendPath = getBackendConfigPath()
-  writeFileSync(
+  await writeFile(
     backendPath,
     backendTemplate(project, environment, environmentName)
   )
   logSuccess(`Created ${backendPath}...`)
 
   const tfvarsPath = getTfvarsPath()
-  writeFileSync(
+  await writeFile(
     tfvarsPath,
     tfvarsTemplate(
       project,

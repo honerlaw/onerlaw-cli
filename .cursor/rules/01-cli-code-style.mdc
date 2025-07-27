@@ -26,3 +26,4 @@ alwaysApply: false
 - When there is usage of `fs`, use `node:fs/promises` instead.
 - Never use synchronous operations when an asynchronous option exists.
 - After changes, run the `npm run validate` script to ensure that everything builds and passes linting rules.
+- Use the `@/` syntax for imports.

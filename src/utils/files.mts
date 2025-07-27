@@ -1,16 +1,17 @@
-import { readFile, writeFile, access, constants } from 'node:fs/promises'
 import {
-  existsSync,
-  readFileSync as nodeReadFileSync,
-  writeFileSync as nodeWriteFileSync,
-} from 'node:fs'
+  readFile as readFilePromises,
+  writeFile as writeFilePromises,
+  access,
+  constants,
+} from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 
 /**
  * Read a file asynchronously with UTF-8 encoding
  */
-export async function readFileUtf8(filePath: string): Promise<string> {
+export async function readFile(filePath: string): Promise<string> {
   try {
-    return await readFile(filePath, 'utf8')
+    return await readFilePromises(filePath, 'utf8')
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     throw new Error(`Failed to read file ${filePath}: ${errorMessage}`)
@@ -20,12 +21,12 @@ export async function readFileUtf8(filePath: string): Promise<string> {
 /**
  * Write content to a file asynchronously with UTF-8 encoding
  */
-export async function writeFileUtf8(
+export async function writeFile(
   filePath: string,
   content: string
 ): Promise<void> {
   try {
-    await writeFile(filePath, content, 'utf8')
+    await writeFilePromises(filePath, content, 'utf8')
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     throw new Error(`Failed to write file ${filePath}: ${errorMessage}`)
@@ -49,18 +50,4 @@ export async function checkFileAccess(filePath: string): Promise<boolean> {
  */
 export function checkFileExists(filePath: string): boolean {
   return existsSync(filePath)
-}
-
-/**
- * Read file content synchronously (for backward compatibility with existing code)
- */
-export function readFileSync(filePath: string): string {
-  return nodeReadFileSync(filePath, 'utf8')
-}
-
-/**
- * Write file content synchronously (for backward compatibility with existing code)
- */
-export function writeFileSync(filePath: string, content: string): void {
-  nodeWriteFileSync(filePath, content, 'utf8')
 }

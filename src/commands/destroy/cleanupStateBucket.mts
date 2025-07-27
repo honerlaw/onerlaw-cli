@@ -6,7 +6,7 @@ export async function cleanupStateBucket(): Promise<void> {
   logWarning('Infrastructure destroyed. Now cleaning up state bucket...')
 
   try {
-    const projectId = extractProjectId()
+    const projectId = await extractProjectId()
 
     if (projectId) {
       await deleteBucket(projectId)
