@@ -26,16 +26,19 @@ variable "image" {
 variable "database_instance_connection_name" {
   description = "The connection name of the Cloud SQL instance"
   type        = string
+  default     = null
 }
 
 variable "database_name" {
   description = "The name of the database"
   type        = string
+  default     = null
 }
 
 variable "database_user" {
   description = "The database user name"
   type        = string
+  default     = null
 }
 
 variable "vpc_connector_name" {
@@ -86,4 +89,5 @@ variable "secrets" {
 variable "database_password_secret_name" {
   description = "The name of the Secret Manager secret containing the database password"
   type        = string
+  default     = null
 } 

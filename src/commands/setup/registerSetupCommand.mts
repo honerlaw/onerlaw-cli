@@ -10,17 +10,23 @@ export function registerSetupCommand(program: Command): void {
     .requiredOption('-p, --project <project-id>', 'Google Cloud Project ID')
     .addOption(ENVIRONMENT_OPTION)
     .requiredOption('-n, --environment-name <name>', 'environment name')
+    .option('--database-name <name>', 'database name (optional)')
+    .option('--database-user <user>', 'database user (optional)')
     .action(
       async (options: {
         project: string
         environment: string
         environmentName: string
+        databaseName?: string
+        databaseUser?: string
       }) => {
         try {
           await setupAction(
             options.project,
             options.environment,
-            options.environmentName
+            options.environmentName,
+            options.databaseName || null,
+            options.databaseUser || null
           )
           logSuccess('Done!')
         } catch (error: unknown) {

@@ -78,8 +78,9 @@ module "networking" {
   depends_on = [google_project_service.required_apis]
 }
 
-# Create Cloud SQL instance
+# Create Cloud SQL instance (only if database_name and database_user are provided)
 module "cloud_sql" {
+  count  = var.database_name != null && var.database_user != null ? 1 : 0
   source = "./modules/cloud-sql"
 
   project_id     = var.project_id
@@ -103,14 +104,14 @@ module "cloud_run" {
   region       = var.region
   image        = var.container_image
 
-  database_instance_connection_name = module.cloud_sql.instance_connection_name
+  database_instance_connection_name = var.database_name != null && var.database_user != null ? module.cloud_sql[0].instance_connection_name : null
   database_name                     = var.database_name
   database_user                     = var.database_user
-  database_password_secret_name     = module.cloud_sql.database_password_secret_name
+  database_password_secret_name     = var.database_name != null && var.database_user != null ? module.cloud_sql[0].database_password_secret_name : null
   vpc_connector_name                = module.networking.vpc_connector_name
   secrets                           = var.cloud_run_secrets
 
-  depends_on = [google_project_service.required_apis, module.cloud_sql, module.networking]
+  depends_on = [google_project_service.required_apis, module.networking]
 }
 
 # Create Artifact Registry
