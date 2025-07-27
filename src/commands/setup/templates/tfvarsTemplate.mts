@@ -1,8 +1,11 @@
+import { databaseTemplate, type DatabaseInfo } from './databaseTemplate.mjs'
+
 export function tfvarsTemplate(
   project: string,
   environment: string,
   environmentName: string,
-  imageUrl: string
+  imageUrl: string,
+  database: DatabaseInfo | null
 ): string {
   return `
 # Project configuration
@@ -13,9 +16,7 @@ environment_name = "${environmentName}"
 # Networking
 region = "us-central1"
 
-# Cloud SQL
-database_name = "app_db"
-database_user = "app_user"
+${databaseTemplate(database)}
 
 # Cloud Run
 container_image = "${imageUrl}"
