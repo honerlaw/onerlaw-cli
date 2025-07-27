@@ -5,8 +5,9 @@ resource "google_service_account" "cloud_run_sa" {
   project      = var.project_id
 }
 
-# Grant Cloud Run service account access to Cloud SQL
+# Grant Cloud Run service account access to Cloud SQL (only if database is configured)
 resource "google_project_iam_member" "cloud_run_sql_client" {
+  count   = var.database_instance_connection_name != null ? 1 : 0
   project = var.project_id
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
@@ -49,19 +50,29 @@ resource "google_cloud_run_v2_service" "service" {
         }
       }
 
-      env {
-        name  = "DB_HOST"
-        value = "/cloudsql/${var.database_instance_connection_name}"
+      # Database environment variables (only if database is configured)
+      dynamic "env" {
+        for_each = var.database_instance_connection_name != null ? [1] : []
+        content {
+          name  = "DB_HOST"
+          value = "/cloudsql/${var.database_instance_connection_name}"
+        }
       }
 
-      env {
-        name  = "DB_NAME"
-        value = var.database_name
+      dynamic "env" {
+        for_each = var.database_name != null ? [1] : []
+        content {
+          name  = "DB_NAME"
+          value = var.database_name
+        }
       }
 
-      env {
-        name  = "DB_USER"
-        value = var.database_user
+      dynamic "env" {
+        for_each = var.database_user != null ? [1] : []
+        content {
+          name  = "DB_USER"
+          value = var.database_user
+        }
       }
 
       env {
@@ -69,13 +80,16 @@ resource "google_cloud_run_v2_service" "service" {
         value = var.environment
       }
 
-      # Use Secret Manager for database password
-      env {
-        name = "DB_PASSWORD"
-        value_source {
-          secret_key_ref {
-            secret  = var.database_password_secret_name
-            version = "latest"
+      # Use Secret Manager for database password (only if database is configured)
+      dynamic "env" {
+        for_each = var.database_password_secret_name != null ? [1] : []
+        content {
+          name = "DB_PASSWORD"
+          value_source {
+            secret_key_ref {
+              secret  = var.database_password_secret_name
+              version = "latest"
+            }
           }
         }
       }
@@ -94,17 +108,24 @@ resource "google_cloud_run_v2_service" "service" {
         }
       }
 
-      # Add Cloud SQL connection
-      volume_mounts {
-        name       = "cloudsql"
-        mount_path = "/cloudsql"
+      # Add Cloud SQL connection (only if database is configured)
+      dynamic "volume_mounts" {
+        for_each = var.database_instance_connection_name != null ? [1] : []
+        content {
+          name       = "cloudsql"
+          mount_path = "/cloudsql"
+        }
       }
     }
 
-    volumes {
-      name = "cloudsql"
-      cloud_sql_instance {
-        instances = [var.database_instance_connection_name]
+    # Add Cloud SQL volumes (only if database is configured)
+    dynamic "volumes" {
+      for_each = var.database_instance_connection_name != null ? [1] : []
+      content {
+        name = "cloudsql"
+        cloud_sql_instance {
+          instances = [var.database_instance_connection_name]
+        }
       }
     }
 

@@ -30,13 +30,13 @@ variable "region" {
 variable "database_name" {
   description = "The name of the database to create"
   type        = string
-  default     = "app_database"
+  default     = null
 }
 
 variable "database_user" {
   description = "The database user name"
   type        = string
-  default     = "app_user"
+  default     = null
 }
 
 variable "container_image" {
