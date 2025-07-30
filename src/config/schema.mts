@@ -1,9 +1,8 @@
 import { z } from 'zod'
 
-export const ConfigItemSchema = z.object({
-  project: z.string().min(1, 'Project ID is required'),
+export const EnvironmentConfigSchema = z.object({
+  name: z.string().min(1, 'Environment name is required'),
   environment: z.enum(['dev', 'staging', 'prod']),
-  environmentName: z.string().min(1, 'Environment name is required'),
   database: z
     .object({
       name: z.string(),
@@ -14,9 +13,17 @@ export const ConfigItemSchema = z.object({
     .default(null),
 })
 
-export const ConfigSchema = z.array(ConfigItemSchema)
+export const ProjectConfigSchema = z.object({
+  project: z.string().min(1, 'Project ID is required'),
+  environments: z
+    .array(EnvironmentConfigSchema)
+    .min(1, 'At least one environment is required'),
+})
 
-export type ConfigItem = z.infer<typeof ConfigItemSchema>
+export const ConfigSchema = z.array(ProjectConfigSchema)
+
+export type EnvironmentConfig = z.infer<typeof EnvironmentConfigSchema>
+export type ProjectConfig = z.infer<typeof ProjectConfigSchema>
 export type Config = z.infer<typeof ConfigSchema>
 
 export function validateConfig(config: unknown): Config {

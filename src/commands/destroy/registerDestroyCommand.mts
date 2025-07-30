@@ -14,7 +14,7 @@ async function destroyAction(): Promise<void> {
   const config = await loadConfigFromPrompt()
   await setupTerraform(config)
   await validateTfvars()
-  await performDestroy()
+  await performDestroy(config)
 }
 
 export function registerDestroyCommand(program: Command): void {

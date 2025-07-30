@@ -1,14 +1,18 @@
 import { logWarning, deleteBucket } from '../../utils/index.mjs'
 import { TERRAFORM_TFVARS_FILE } from '../../constants.mjs'
-import { extractProjectId } from './extractProjectId.mjs'
+import { LoadedConfig } from '@/config/index.mjs'
 
-export async function cleanupStateBucket(): Promise<void> {
+export async function cleanupStateBucket(config: LoadedConfig): Promise<void> {
   logWarning('Infrastructure destroyed. Now cleaning up state bucket...')
 
   try {
-    const projectId = await extractProjectId()
+    const projectId = config.selection.project
 
-    if (projectId) {
+    // only delete the bucket if there is only one environment
+    if (
+      config.configs.find(config => config.project === projectId)?.environments
+        .length === 1
+    ) {
       await deleteBucket(projectId)
     } else {
       logWarning(

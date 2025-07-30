@@ -1,7 +1,11 @@
 import { input, select } from '@/utils/prompts.mjs'
 import { logSuccess, logError } from '@/utils/logger.mjs'
 import { writeFile, checkFileAccess } from '@/utils/files.mjs'
-import { validateConfig, type ConfigItem } from '@/config/schema.mjs'
+import {
+  validateConfig,
+  type ProjectConfig,
+  type EnvironmentConfig,
+} from '@/config/schema.mjs'
 import { CONFIG_PATH } from '@/config/constants.mjs'
 import { loadConfig } from '@/config/loader.mjs'
 
@@ -18,21 +22,52 @@ async function getDatabase(
   }
 }
 
-async function getConfigArray(
+async function getUpdatedConfig(
   configExists: boolean,
-  configItem: ConfigItem
-): Promise<ConfigItem[]> {
+  projectId: string,
+  environmentConfig: EnvironmentConfig
+): Promise<ProjectConfig[]> {
   if (!configExists) {
-    return [configItem]
+    return [
+      {
+        project: projectId,
+        environments: [environmentConfig],
+      },
+    ]
   }
 
   try {
     const existingConfig = await loadConfig(CONFIG_PATH)
-    return [...existingConfig, configItem]
+
+    // Check if project already exists
+    const existingProjectIndex = existingConfig.findIndex(
+      p => p.project === projectId
+    )
+
+    if (existingProjectIndex >= 0) {
+      // Add environment to existing project
+      const updatedConfig = [...existingConfig]
+      updatedConfig[existingProjectIndex].environments.push(environmentConfig)
+      return updatedConfig
+    } else {
+      // Add new project
+      return [
+        ...existingConfig,
+        {
+          project: projectId,
+          environments: [environmentConfig],
+        },
+      ]
+    }
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     logError(`Failed to load existing config: ${errorMessage}`)
-    return [configItem]
+    return [
+      {
+        project: projectId,
+        environments: [environmentConfig],
+      },
+    ]
   }
 }
 
@@ -53,19 +88,22 @@ export async function initAction(): Promise<void> {
 
     const database = await getDatabase(wantsDatabase)
 
-    const configItem: ConfigItem = {
-      project,
+    const environmentConfig: EnvironmentConfig = {
+      name: environmentName,
       environment,
-      environmentName,
       database,
     }
 
     // Check if config file exists and load existing config
     const configExists = await checkFileAccess(CONFIG_PATH)
-    const config = await getConfigArray(configExists, configItem)
+    const config = await getUpdatedConfig(
+      configExists,
+      project,
+      environmentConfig
+    )
 
     if (configExists) {
-      logSuccess('Added new configuration to existing config file')
+      logSuccess('Added new environment configuration to existing config file')
     } else {
       logSuccess('Created new config file with configuration')
     }

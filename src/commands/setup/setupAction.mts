@@ -1,18 +1,18 @@
-import {
-  logSuccess,
-  initializeTerraform,
-  applyTerraform,
-  createBucket,
-  setupTerraform,
-} from '../../utils/index.mjs'
-import { ConfigItem } from '@/config/index.mjs'
+import { logSuccess } from '@/utils/logger.mjs'
+import { setupTerraform } from '@/utils/terraform/setupTerraform.mjs'
+import { createBucket } from '@/utils/bucket/createBucket.mjs'
+import { initializeTerraform } from '@/utils/terraform/init.mjs'
+import { applyTerraform } from '@/utils/terraform/apply.mjs'
+import { type LoadedConfig } from '@/config/loadConfigFromPrompt.mjs'
 
-export async function setupAction(config: ConfigItem): Promise<void> {
-  const { project, environment } = config
+export async function setupAction(config: LoadedConfig): Promise<void> {
+  const {
+    selection: { project },
+  } = config
 
   logSuccess(`Setting up backend configuration for project: ${project}`)
-  logSuccess(`Environment: ${environment}`)
 
+  // Setup terraform configuration
   await setupTerraform(config)
   logSuccess('Configuration files created successfully!')
 
