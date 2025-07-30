@@ -1,10 +1,18 @@
 import { Command } from 'commander'
-import { logError, logSuccess, validateTfvars } from '../../utils/index.mjs'
+import {
+  logError,
+  logSuccess,
+  validateTfvars,
+  setupTerraform,
+} from '../../utils/index.mjs'
+import { loadConfigFromPrompt } from '../../config/loadConfigFromPrompt.mjs'
 import { performDestroy } from './performDestroy.mjs'
 
 async function destroyAction(): Promise<void> {
   logError(`Destroying infrastructure...`)
 
+  const config = await loadConfigFromPrompt()
+  await setupTerraform(config)
   await validateTfvars()
   await performDestroy()
 }

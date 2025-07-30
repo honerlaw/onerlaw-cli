@@ -1,12 +1,12 @@
 import { Command } from 'commander'
 import { ENVIRONMENT_OPTION } from '../../utils/options.mjs'
-import { buildPublishAction } from './buildPublishAction.mjs'
+import { buildAction } from './buildAction.mjs'
 
 export function registerBuildCommand(program: Command): void {
   program
     .command('build')
     .description(
-      'Build and publish Docker image to Google Container Registry (gcr.io)'
+      'Build and push a Docker image to Google Container Registry (gcr.io)'
     )
     .requiredOption('-p, --project <project-id>', 'Google Cloud Project ID')
     .addOption(ENVIRONMENT_OPTION.makeOptionMandatory(true))
@@ -17,7 +17,7 @@ export function registerBuildCommand(program: Command): void {
     .option('-c, --context <path>', 'Build context path')
     .option('--no-cache', 'Disable Docker build cache')
     .action(async options => {
-      await buildPublishAction({
+      await buildAction({
         project: options.project,
         environment: options.environment,
         environmentName: options.environmentName,

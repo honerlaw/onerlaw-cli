@@ -1,4 +1,3 @@
-import { logger } from './logger.mjs'
 import { consola } from 'consola'
 
 /**
@@ -46,8 +45,6 @@ export async function select<T>(
   choices: Array<{ name: string; value: T; description?: string }>,
   defaultIndex = 0
 ): Promise<T> {
-  logger.info(message)
-
   const options = choices.map((choice, index) => ({
     label: choice.name,
     value: index.toString(),
@@ -55,7 +52,7 @@ export async function select<T>(
   }))
 
   try {
-    const answer = await consola.prompt('Select an option:', {
+    const answer = await consola.prompt(message, {
       type: 'select',
       options: options,
       default: defaultIndex.toString(),
@@ -64,7 +61,11 @@ export async function select<T>(
     const selectedIndex = parseInt(answer as string)
     return choices[selectedIndex].value
   } catch {
+    if (defaultIndex === -1) {
+      throw new Error('Must select an option.')
+    }
+
     // Fallback to default if user cancels
-    return choices[defaultIndex].value
+    return choices[defaultIndex]?.value
   }
 }

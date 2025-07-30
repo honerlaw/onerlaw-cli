@@ -1,42 +1,20 @@
 import {
   logSuccess,
-  getBackendConfigPath,
-  getTfvarsPath,
   initializeTerraform,
   applyTerraform,
   createBucket,
-  writeFile,
+  setupTerraform,
 } from '../../utils/index.mjs'
-import { backendTemplate, tfvarsTemplate } from './templates/index.mjs'
-import { getImageFullyQualifiedName } from './getImageFullyQualifiedName.mjs'
-import { Config } from '@/config/index.mjs'
+import { ConfigItem } from '@/config/index.mjs'
 
-export async function setupAction(config: Config): Promise<void> {
-  const { project, environment, environmentName, database } = config
+export async function setupAction(config: ConfigItem): Promise<void> {
+  const { project, environment } = config
 
   logSuccess(`Setting up backend configuration for project: ${project}`)
   logSuccess(`Environment: ${environment}`)
 
-  // create the backend file to be used
-  const backendPath = getBackendConfigPath()
-  await writeFile(
-    backendPath,
-    backendTemplate(project, environment, environmentName)
-  )
-  logSuccess(`Created ${backendPath}...`)
-
-  const tfvarsPath = getTfvarsPath()
-  await writeFile(
-    tfvarsPath,
-    tfvarsTemplate(
-      project,
-      environment,
-      environmentName,
-      await getImageFullyQualifiedName(project, environment, environmentName),
-      database
-    )
-  )
-  logSuccess(`Created ${tfvarsPath}...`)
+  await setupTerraform(config)
+  logSuccess('Configuration files created successfully!')
 
   await createBucket(project)
   await initializeTerraform()

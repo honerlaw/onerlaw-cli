@@ -1,4 +1,4 @@
-export { registerDestroyCommand } from './destroy.mjs'
+export { registerDestroyCommand } from './registerDestroyCommand.mjs'
 export { performDestroy } from './performDestroy.mjs'
 export { runTerraformDestroy } from './runTerraformDestroy.mjs'
 export { cleanupStateBucket } from './cleanupStateBucket.mjs'

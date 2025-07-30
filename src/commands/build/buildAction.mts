@@ -12,9 +12,7 @@ import { configureDockerAuth } from './configureDockerAuth.mjs'
 import { buildDockerImage } from './buildDockerImage.mjs'
 import { pushDockerImage } from './pushDockerImage.mjs'
 
-export async function buildPublishAction(
-  options: BuildPublishOptions
-): Promise<void> {
+export async function buildAction(options: BuildPublishOptions): Promise<void> {
   const {
     project,
     environment,

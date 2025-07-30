@@ -27,3 +27,4 @@ alwaysApply: false
 - Never use synchronous operations when an asynchronous option exists.
 - After changes, run the `npm run validate` script to ensure that everything builds and passes linting rules.
 - Use the `@/` syntax for imports.
+- Instead of using `let` for variables that may change based on conditions, use a new function that will return the variables based on conditions instead.

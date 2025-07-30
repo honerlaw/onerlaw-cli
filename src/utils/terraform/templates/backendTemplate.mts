@@ -1,4 +1,4 @@
-import { getBucketName } from '../../../utils/bucket/getBucketName.mjs'
+import { getBucketName } from '../../bucket/getBucketName.mjs'
 
 export function backendTemplate(
   project: string,

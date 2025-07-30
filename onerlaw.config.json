@@ -1,0 +1,20 @@
+[
+  {
+    "project": "jurnara",
+    "environment": "dev",
+    "environmentName": "Testing",
+    "database": {
+      "name": "test",
+      "user": "test"
+    }
+  },
+  {
+    "project": "testing",
+    "environment": "staging",
+    "environmentName": "stage",
+    "database": {
+      "name": "stage",
+      "user": "stage"
+    }
+  }
+]

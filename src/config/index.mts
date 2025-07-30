@@ -1,2 +1,3 @@
 export { loadConfig } from './loader.mjs'
-export { validateConfig, type Config } from './schema.mjs'
+export { loadConfigFromPrompt } from './loadConfigFromPrompt.mjs'
+export { validateConfig, type Config, type ConfigItem } from './schema.mjs'
