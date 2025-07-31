@@ -19,6 +19,7 @@ export async function initializeTerraform(): Promise<void> {
       logSuccess(`Using backend configuration...`)
       await runCommand('terraform', [
         'init',
+        '-migrate-state',
         `-backend-config=${BACKEND_TF_FILE}`,
       ])
     } else {
