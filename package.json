@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/index.mjs",
   "bin": {
-    "@onerlaw/cli": "dist/index.mjs"
+    "onerlaw-cli": "dist/index.mjs"
   },
   "files": [
     "dist",
