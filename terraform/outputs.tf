@@ -10,12 +10,12 @@ output "cloud_run_service_name" {
 
 output "database_instance_name" {
   description = "The name of the Cloud SQL instance"
-  value       = module.cloud_sql[0].instance_name
+  value       = local.cloud_sql_enabled ? module.cloud_sql[0].instance_name : null
 }
 
 output "database_instance_connection_name" {
   description = "The connection name of the Cloud SQL instance"
-  value       = module.cloud_sql[0].instance_connection_name
+  value       = local.cloud_sql_enabled ? module.cloud_sql[0].instance_connection_name : null
 }
 
 output "vpc_connector_name" {
@@ -25,12 +25,12 @@ output "vpc_connector_name" {
 
 output "database_name" {
   description = "The name of the database"
-  value       = module.cloud_sql[0].database_name
+  value       = local.cloud_sql_enabled ? module.cloud_sql[0].database_name : null
 }
 
 output "database_password_secret_name" {
   description = "The name of the Secret Manager secret containing the database password"
-  value       = module.cloud_sql[0].database_password_secret_name
+  value       = local.cloud_sql_enabled ? module.cloud_sql[0].database_password_secret_name : null
 }
 
 output "artifact_registry_location" {

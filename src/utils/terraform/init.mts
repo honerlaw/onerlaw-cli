@@ -9,8 +9,6 @@ import {
 import { BACKEND_TF_FILE } from '../../constants.mjs'
 
 export async function initializeTerraform(): Promise<void> {
-  logSuccess(`Initializing Terraform...`)
-
   await validateTfvars()
 
   await withTerraformDirectory(async () => {

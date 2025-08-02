@@ -21,6 +21,11 @@ terraform {
   }
 }
 
+# Local variable to determine if Cloud SQL is enabled
+locals {
+  cloud_sql_enabled = var.database_name != null && var.database_user != null
+}
+
 # Create service account for Terraform backend access
 resource "google_service_account" "terraform_backend" {
   account_id   = "${var.environment}-${var.environment_name}-terraform-backend-sa"
@@ -80,7 +85,7 @@ module "networking" {
 
 # Create Cloud SQL instance (only if database_name and database_user are provided)
 module "cloud_sql" {
-  count  = var.database_name != null && var.database_user != null ? 1 : 0
+  count  = local.cloud_sql_enabled ? 1 : 0
   source = "./modules/cloud-sql"
 
   project_id     = var.project_id
@@ -104,10 +109,10 @@ module "cloud_run" {
   region       = var.region
   image        = var.container_image
 
-  database_instance_connection_name = var.database_name != null && var.database_user != null ? module.cloud_sql[0].instance_connection_name : null
+  database_instance_connection_name = local.cloud_sql_enabled ? module.cloud_sql[0].instance_connection_name : null
   database_name                     = var.database_name
   database_user                     = var.database_user
-  database_password_secret_name     = var.database_name != null && var.database_user != null ? module.cloud_sql[0].database_password_secret_name : null
+  database_password_secret_name     = local.cloud_sql_enabled ? module.cloud_sql[0].database_password_secret_name : null
   vpc_connector_name                = module.networking.vpc_connector_name
   secrets                           = var.cloud_run_secrets
 
