@@ -57,4 +57,51 @@ output "terraform_backend_key" {
   description = "The service account key for Terraform backend authentication (sensitive)"
   value       = google_service_account_key.terraform_backend_key.private_key
   sensitive   = true
+}
+
+# Load Balancer Outputs
+output "load_balancer_ip_address" {
+  description = "The global IP address of the load balancer"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].ip_address : null
+}
+
+output "load_balancer_forwarding_rule_name" {
+  description = "The name of the HTTPS forwarding rule"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].forwarding_rule_name : null
+}
+
+output "load_balancer_url_map_name" {
+  description = "The name of the URL map"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].url_map_name : null
+}
+
+output "load_balancer_backend_service_name" {
+  description = "The name of the backend service"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].backend_service_name : null
+}
+
+output "load_balancer_ssl_certificate_name" {
+  description = "The name of the managed SSL certificate"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].ssl_certificate_name : null
+}
+
+# DNS Outputs
+output "dns_zone_name" {
+  description = "The name of the DNS managed zone"
+  value       = local.load_balancer_enabled ? module.dns[0].dns_zone_name : null
+}
+
+output "dns_name_servers" {
+  description = "The list of name servers for the DNS zone"
+  value       = local.load_balancer_enabled ? module.dns[0].name_servers : null
+}
+
+output "dns_primary_domain_record" {
+  description = "The A record for the primary domain"
+  value       = local.load_balancer_enabled ? module.dns[0].primary_domain_a_record : null
+}
+
+output "dns_www_record" {
+  description = "The A record for www subdomain (if created)"
+  value       = local.load_balancer_enabled ? module.dns[0].www_a_record : null
 } 

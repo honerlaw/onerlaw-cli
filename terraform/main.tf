@@ -21,9 +21,10 @@ terraform {
   }
 }
 
-# Local variable to determine if Cloud SQL is enabled
+# Local variables for conditional resource creation
 locals {
-  cloud_sql_enabled = var.database_name != null && var.database_user != null
+  cloud_sql_enabled     = var.database_name != null && var.database_user != null
+  load_balancer_enabled = var.domain_name != null
 }
 
 # Create service account for Terraform backend access
@@ -61,7 +62,8 @@ resource "google_project_service" "required_apis" {
     "storage.googleapis.com",
     "servicenetworking.googleapis.com",
     "vpcaccess.googleapis.com",
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "dns.googleapis.com"
   ])
 
   project = var.project_id
@@ -129,4 +131,36 @@ module "artifact_registry" {
   region        = var.region
 
   depends_on = [google_project_service.required_apis]
+}
+
+# Create Load Balancer (only if domain_name is provided)
+module "load_balancer" {
+  count  = local.load_balancer_enabled ? 1 : 0
+  source = "./modules/load-balancer"
+
+  environment            = var.environment
+  environment_name       = var.environment_name
+  project_id             = var.project_id
+  region                 = var.region
+  domains                = concat([var.domain_name], [for subdomain in var.subdomain_names : "${subdomain}.${var.domain_name}"])
+  cloud_run_service_name = module.cloud_run.service_name
+  network                = module.networking.vpc_network
+
+  depends_on = [google_project_service.required_apis, module.cloud_run, module.networking]
+}
+
+# Create DNS records (only if domain_name is provided)
+module "dns" {
+  count  = local.load_balancer_enabled ? 1 : 0
+  source = "./modules/dns"
+
+  environment              = var.environment
+  environment_name         = var.environment_name
+  project_id               = var.project_id
+  domain_name              = var.domain_name
+  load_balancer_ip_address = module.load_balancer[0].ip_address
+  subdomain_names          = var.subdomain_names
+  create_www_record        = false
+
+  depends_on = [module.load_balancer]
 } 

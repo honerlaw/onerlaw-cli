@@ -1,0 +1,93 @@
+---
+description: Terraform best practices and patterns for infrastructure as code
+globs: terraform/**/*
+alwaysApply: false
+---
+
+## Resource Naming and Organization
+- All resources must be prefixed with `${var.environment}-${var.environment_name}` to ensure uniqueness across environments
+- Use descriptive, lowercase names with hyphens for resource identifiers
+- Group related resources together in logical modules
+- Use consistent naming patterns across all modules and resources
+
+## Module Structure and Design
+- Each module should have a clear, single responsibility
+- Modules must accept `environment` and `environment_name` as required variables
+- Use local variables for computed values and complex expressions
+- Keep modules focused and avoid creating monolithic modules
+- Use count or for_each for conditional resource creation rather than separate modules
+
+## Variable Management
+- Always provide descriptive variable descriptions
+- Use validation blocks for critical variables (environment, project_id, etc.)
+- Set sensible defaults for optional variables
+- Use type constraints to prevent invalid values
+- Group related variables together in variables.tf
+
+## Security Best Practices
+- Use service accounts with minimal required permissions
+- Store sensitive values in Secret Manager, not in terraform.tfvars
+- Use IAM conditions to restrict access based on environment
+- Enable audit logging for all resources where possible
+- Use private networking for database and internal services
+
+## State Management
+- Use remote state storage (GCS in this case) for all environments
+- Never commit .tfstate files to version control
+- Use state locking to prevent concurrent modifications
+- Use workspaces or separate state files for different environments
+
+## Resource Dependencies
+- Use explicit depends_on for resources that have implicit dependencies
+- Avoid circular dependencies by carefully planning resource relationships
+- Use data sources to reference existing resources when appropriate
+- Use for_each with depends_on for complex dependency chains
+
+## Code Quality
+- Use consistent indentation (2 spaces)
+- Add meaningful comments explaining complex logic or business rules
+- Use locals for repeated expressions and computed values
+- Keep resource blocks focused and avoid deeply nested configurations
+- Use data sources to reference existing infrastructure
+
+## Provider Configuration
+- Pin provider versions to ensure consistency
+- Use provider aliases when managing multiple accounts/regions
+- Configure providers at the root level, not in modules
+- Use required_providers block to specify version constraints
+
+## Output Management
+- Export only necessary values from modules
+- Use descriptive output names and descriptions
+- Use sensitive = true for outputs containing sensitive data
+- Group related outputs together
+
+## Environment-Specific Configuration
+- Use terraform.tfvars for environment-specific values
+- Use variable validation to ensure environment values are valid
+- Use conditional logic (count, for_each) for environment-specific resources
+- Keep environment-specific configurations separate from core infrastructure
+
+## Performance and Scalability
+- Use for_each instead of count when possible for better resource management
+- Use data sources to reference existing resources rather than hardcoding values
+- Use local values for computed expressions to improve readability
+- Avoid creating resources that are not needed in all environments
+
+## Documentation
+- Include README.md files in each module explaining its purpose and usage
+- Document all variables, outputs, and their expected values
+- Include examples of how to use each module
+- Document any special considerations or requirements
+
+## Error Handling and Validation
+- Use variable validation blocks for critical inputs
+- Use conditional logic to handle optional features gracefully
+- Provide clear error messages in validation blocks
+- Use data source lookups to validate external dependencies exist
+
+## Cost Optimization
+- Use appropriate resource tiers for each environment
+- Use conditional creation for expensive resources (only in production)
+- Use lifecycle rules to prevent unnecessary resource recreation
+- Use data sources to reference existing resources when possible

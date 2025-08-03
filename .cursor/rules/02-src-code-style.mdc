@@ -1,6 +1,0 @@
----
-description: Code style and requirements for the terraform files in the repository
-globs: terraform/**/*
-alwaysApply: false
----
-- all terraform resources should be prefixed with the `environment` and `environment_name`. There should not be duplicate usage of either of those variables in the resource name.

@@ -1,0 +1,201 @@
+---
+description: Terraform best practices and patterns for infrastructure as code
+globs: terraform/**/*
+alwaysApply: false
+---
+
+# Terraform File Structure Best Practices
+
+## Root Module Structure
+- **main.tf**: Contains the main Terraform configuration, provider blocks, and module calls
+- **variables.tf**: All variable declarations with descriptions, types, and validation rules
+- **outputs.tf**: All output declarations with descriptions and sensitive flags
+- **backend.tfbackend**: Backend configuration file (not committed to version control)
+- **terraform.tfvars**: Environment-specific variable values (not committed to version control)
+- **versions.tf**: Provider version constraints and required Terraform version (alternative to main.tf)
+
+## Module Structure
+Each module should follow this consistent structure:
+- **main.tf**: Primary resource definitions and local variables
+- **variables.tf**: Module input variables with descriptions and validation
+- **outputs.tf**: Module outputs with descriptions
+- **README.md**: Documentation explaining module purpose, usage, and examples
+- **versions.tf**: Module-specific provider requirements (if different from root)
+
+## File Organization Principles
+
+### Root Level Organization
+- Keep root module files focused on orchestration, not resource creation
+- Use modules for all resource creation to promote reusability
+- Group related resources into logical modules (networking, compute, storage, etc.)
+- Use consistent naming patterns across all modules
+
+### Module Organization
+- Each module should have a single, clear responsibility
+- Group related resources within the same module
+- Use local variables for computed values and complex expressions
+- Keep resource blocks focused and avoid deeply nested configurations
+
+### File Content Guidelines
+
+#### main.tf Structure
+```hcl
+# 1. Terraform configuration block (root only)
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    # Provider definitions
+  }
+  backend "gcs" {
+    # Backend configuration
+  }
+}
+
+# 2. Local variables for computed values
+locals {
+  base_name = "${var.environment}-${var.environment_name}"
+  # Other computed values
+}
+
+# 3. Provider configurations (root only)
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
+# 4. Data sources (if any)
+data "google_project" "current" {
+  project_id = var.project_id
+}
+
+# 5. Resource definitions or module calls
+resource "google_compute_network" "vpc" {
+  name = "${local.base_name}-vpc"
+  # Resource configuration
+}
+
+# 6. Module calls (root only)
+module "networking" {
+  source = "./modules/networking"
+  # Module variables
+}
+```
+
+#### variables.tf Structure
+```hcl
+# Required variables first
+variable "project_id" {
+  description = "The GCP project ID"
+  type        = string
+  
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{4,28}[a-z0-9]$", var.project_id))
+    error_message = "Project ID must be 6-30 characters, lowercase letters, numbers, and hyphens only."
+  }
+}
+
+variable "environment" {
+  description = "Environment name (e.g., dev, staging, prod)"
+  type        = string
+  
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of: dev, staging, prod."
+  }
+}
+
+# Optional variables with defaults
+variable "region" {
+  description = "The GCP region for resources"
+  type        = string
+  default     = "us-central1"
+}
+```
+
+#### outputs.tf Structure
+```hcl
+# Group related outputs together
+output "vpc_network_id" {
+  description = "The ID of the VPC network"
+  value       = google_compute_network.vpc.id
+}
+
+output "vpc_network_self_link" {
+  description = "The self-link of the VPC network"
+  value       = google_compute_network.vpc.self_link
+}
+
+# Sensitive outputs
+output "database_password" {
+  description = "The database password"
+  value       = google_sql_user.database_user.password
+  sensitive   = true
+}
+```
+
+## Naming Conventions
+
+### Resource Naming
+- Use `${var.environment}-${var.environment_name}` prefix for all resources
+- Use descriptive, lowercase names with hyphens
+- Avoid duplicate environment/environment_name in resource names
+- Use consistent naming patterns across all modules
+
+### File Naming
+- Use lowercase with hyphens for file names
+- Use descriptive names that indicate purpose
+- Keep file names short but meaningful
+
+### Variable Naming
+- Use snake_case for variable names
+- Use descriptive names that clearly indicate purpose
+- Group related variables together
+
+## Documentation Standards
+
+### README.md Requirements
+Each module should include:
+- Purpose and responsibility of the module
+- Required and optional variables with descriptions
+- Outputs with descriptions
+- Usage examples
+- Dependencies and requirements
+- Any special considerations or limitations
+
+### Code Comments
+- Use meaningful comments explaining "why" not "what"
+- Comment complex logic or business rules
+- Use consistent comment formatting
+- Document any workarounds or special configurations
+
+## Security and Best Practices
+
+### File Permissions
+- Never commit `.tfstate` files to version control
+- Never commit `terraform.tfvars` with sensitive values
+- Use `.gitignore` to exclude sensitive files
+- Store sensitive values in Secret Manager or environment variables
+
+### State Management
+- Use remote state storage (GCS in this case)
+- Use state locking to prevent concurrent modifications
+- Use workspaces or separate state files for different environments
+- Never hardcode sensitive values in Terraform files
+
+### Resource Organization
+- Group related resources in logical modules
+- Use consistent resource naming patterns
+- Use local variables for repeated expressions
+- Keep modules focused and avoid monolithic configurations
+
+## Module Dependencies
+- Use explicit `depends_on` for resources with implicit dependencies
+- Avoid circular dependencies by careful planning
+- Use data sources to reference existing resources
+- Document module dependencies clearly
+
+## Environment Management
+- Use separate state files or workspaces for different environments
+- Use conditional logic (count, for_each) for environment-specific resources
+- Keep environment-specific configurations separate from core infrastructure
+- Use variable validation to ensure environment values are valid 

@@ -5,7 +5,8 @@ export function tfvarsTemplate(
   environment: string,
   environmentName: string,
   imageUrl: string,
-  database: DatabaseInfo | null
+  database: DatabaseInfo | null,
+  domainName: string | null = null
 ): string {
   return `
 # Project configuration
@@ -20,5 +21,8 @@ ${databaseTemplate(database)}
 
 # Cloud Run
 container_image = "${imageUrl}"
+
+# DNS and Load Balancer
+${domainName ? `domain_name = "${domainName}"` : '# domain_name = "example.com"  # Uncomment and set to enable load balancer and DNS'}
 `
 }

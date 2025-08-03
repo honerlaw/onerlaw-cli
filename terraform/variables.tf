@@ -90,3 +90,23 @@ variable "cloud_run_secrets" {
   }))
   default = []
 }
+
+# DNS Variables
+variable "domain_name" {
+  description = "The primary domain name for DNS records (e.g., 'example.com'). If provided, DNS records and load balancer will be created automatically."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.domain_name == null || can(regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", var.domain_name))
+    error_message = "Domain name must be a valid domain format if provided."
+  }
+}
+
+variable "subdomain_names" {
+  description = "List of subdomain names to create A records for (e.g., ['api', 'admin', 'staging'])"
+  type        = list(string)
+  default     = []
+}
+
+

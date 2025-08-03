@@ -1,5 +1,5 @@
 export { registerDestroyCommand } from './destroy/index.mjs'
-export { registerSetupCommand } from './setup/index.mjs'
+export { registerDeployCommand } from './deploy/index.mjs'
 export { registerBuildCommand } from './build/index.mjs'
 export { registerCreateSecretCommand } from './createSecret/index.mjs'
-export { registerInitCommand } from './init/index.mjs'
+export { registerConfigCommand } from './config/index.mjs'

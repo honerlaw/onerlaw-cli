@@ -1,16 +1,16 @@
 import { Command } from 'commander'
 import { logSuccess, logError } from '../../utils/index.mjs'
-import { setupAction } from './setupAction.mjs'
+import { deployAction } from './deployAction.mjs'
 import { loadConfigFromPrompt } from '@/config/loadConfigFromPrompt.mjs'
 
-export function registerSetupCommand(program: Command): void {
+export function registerDeployCommand(program: Command): void {
   program
-    .command('setup')
-    .description(`Setup backend configuration and terraform.tfvars`)
+    .command('deploy')
+    .description(`Deploy infrastructure using Terraform`)
     .action(async () => {
       try {
         const config = await loadConfigFromPrompt()
-        await setupAction(config)
+        await deployAction(config)
         logSuccess('Done!')
       } catch (error: unknown) {
         const errorMessage =

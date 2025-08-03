@@ -11,6 +11,8 @@ export const EnvironmentConfigSchema = z.object({
     .optional()
     .nullable()
     .default(null),
+  domainName: z.string().optional().nullable().default(null),
+  subdomainNames: z.array(z.string()).optional().default([]),
 })
 
 export const ProjectConfigSchema = z.object({

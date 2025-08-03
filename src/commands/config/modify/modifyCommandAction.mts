@@ -1,14 +1,14 @@
 import { Command } from 'commander'
-import { initAction } from './initAction.mjs'
 import { logSuccess, logError } from '@/utils/logger.mjs'
+import { modifyConfigAction } from './modifyConfigAction.mjs'
 
-export function registerInitCommand(program: Command): void {
-  program
-    .command('init')
-    .description('Initialize a new onerlaw config in the current directory')
+export function registerConfigModifyCommand(configCommand: Command): void {
+  configCommand
+    .command('modify')
+    .description('Modify existing configurations')
     .action(async () => {
       try {
-        await initAction()
+        await modifyConfigAction()
         logSuccess('Done!')
       } catch (error: unknown) {
         const errorMessage =

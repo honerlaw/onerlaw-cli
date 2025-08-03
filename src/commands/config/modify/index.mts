@@ -1,0 +1,7 @@
+export { modifyConfigAction } from './modifyConfigAction.mjs'
+export { modifyExistingConfiguration } from './modifyExistingConfiguration.mjs'
+export { modifyProject } from './modifyProject.mjs'
+export { modifyEnvironment } from './modifyEnvironment.mjs'
+export { selectProjectToModify } from './selectProjectToModify.mjs'
+export { selectEnvironmentToModify } from './selectEnvironmentToModify.mjs'
+export { registerConfigModifyCommand } from './modifyCommandAction.mjs'

@@ -1,13 +1,13 @@
 import { writeFile } from '@/utils/files.mjs'
 import { tfvarsTemplate } from './templates/tfvarsTemplate.mjs'
 import { backendTemplate } from './templates/backendTemplate.mjs'
-import { getImageFullyQualifiedName } from '@/commands/setup/getImageFullyQualifiedName.mjs'
+import { getImageFullyQualifiedName } from '@/commands/deploy/getImageFullyQualifiedName.mjs'
 import { type LoadedConfig } from '@/config/loadConfigFromPrompt.mjs'
 import { getBackendConfigPath, getTfvarsPath } from '@/utils/paths.mjs'
 
 export async function setupTerraform(config: LoadedConfig): Promise<void> {
   const {
-    selection: { project, environment, environmentName, database },
+    selection: { project, environment, environmentName, database, domainName },
   } = config
 
   // Get the fully qualified image name
@@ -23,7 +23,8 @@ export async function setupTerraform(config: LoadedConfig): Promise<void> {
     environment,
     environmentName,
     imageUrl,
-    database
+    database,
+    domainName
   )
 
   await writeFile(getTfvarsPath(), tfvarsContent)

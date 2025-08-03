@@ -5,12 +5,12 @@ import { initializeTerraform } from '@/utils/terraform/init.mjs'
 import { applyTerraform } from '@/utils/terraform/apply.mjs'
 import { type LoadedConfig } from '@/config/loadConfigFromPrompt.mjs'
 
-export async function setupAction(config: LoadedConfig): Promise<void> {
+export async function deployAction(config: LoadedConfig): Promise<void> {
   const {
     selection: { project },
   } = config
 
-  logSuccess(`Setting up backend configuration for project: ${project}`)
+  logSuccess(`Deploying infrastructure for project: ${project}`)
 
   // Setup terraform configuration
   await setupTerraform(config)
@@ -20,5 +20,5 @@ export async function setupAction(config: LoadedConfig): Promise<void> {
   await initializeTerraform()
   await applyTerraform()
 
-  logSuccess('Backend configuration updated successfully!')
+  logSuccess('Infrastructure deployed successfully!')
 }
