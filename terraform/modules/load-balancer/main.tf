@@ -38,7 +38,7 @@ resource "google_compute_global_forwarding_rule" "lb_http_forwarding_rule" {
 resource "google_compute_target_http_proxy" "lb_http_proxy" {
   name    = "${local.base_name}-lb-http-proxy"
   project = var.project_id
-  url_map = google_compute_url_map.lb_url_map.id
+  url_map = google_compute_url_map.lb_http_redirect.id
 }
 
 # Create HTTPS proxy with SSL certificate
@@ -69,6 +69,17 @@ resource "google_compute_managed_ssl_certificate" "lb_ssl_cert" {
 
   managed {
     domains = var.domains
+  }
+}
+
+# Create URL map for HTTP to HTTPS redirect
+resource "google_compute_url_map" "lb_http_redirect" {
+  name    = "${local.base_name}-lb-http-redirect"
+  project = var.project_id
+
+  default_url_redirect {
+    https_redirect = true
+    strip_query    = false
   }
 }
 
