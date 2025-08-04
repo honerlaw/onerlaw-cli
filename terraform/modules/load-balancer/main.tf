@@ -49,10 +49,23 @@ resource "google_compute_target_https_proxy" "lb_https_proxy" {
   ssl_certificates = [google_compute_managed_ssl_certificate.lb_ssl_cert.id]
 }
 
+resource "random_id" "certificate" {
+  byte_length = 4
+  prefix      = "${local.base_name}-lb-ssl-cert-"
+
+  keepers = {
+    domains = join(",", var.domains)
+  }
+}
+
 # Create managed SSL certificate for automatic renewal
 resource "google_compute_managed_ssl_certificate" "lb_ssl_cert" {
-  name    = "${local.base_name}-lb-ssl-cert"
+  name    = random_id.certificate.hex
   project = var.project_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   managed {
     domains = var.domains

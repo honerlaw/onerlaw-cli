@@ -17,8 +17,6 @@ export async function setupTerraform(config: LoadedConfig): Promise<void> {
     environmentName
   )
 
-  console.log(JSON.stringify(config, null, 2))
-
   // Generate terraform.tfvars
   const tfvarsContent = tfvarsTemplate(
     project,
