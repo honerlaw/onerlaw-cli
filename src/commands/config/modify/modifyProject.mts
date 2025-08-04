@@ -8,8 +8,7 @@ import {
   getEnvironment,
   getEnvironmentName,
   getDatabase,
-  getDomainName,
-  getSubdomainNames,
+  getDNS,
 } from '@/config/prompts/index.mjs'
 
 export async function modifyProject(
@@ -45,15 +44,13 @@ export async function modifyProject(
     const newEnvironmentType = await getEnvironment()
 
     const database = await getDatabase()
-    const domainName = await getDomainName()
-    const subdomainNames = domainName ? await getSubdomainNames() : []
+    const dns = await getDNS()
 
     const newEnvironment: EnvironmentConfig = {
       name: newEnvironmentName,
       environment: newEnvironmentType,
       database,
-      domainName,
-      subdomainNames,
+      dns,
     }
 
     updatedEnvironments.push(newEnvironment)

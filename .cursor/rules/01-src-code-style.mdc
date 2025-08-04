@@ -28,3 +28,4 @@ alwaysApply: false
 - After changes, run the `npm run validate` script to ensure that everything builds and passes linting rules.
 - Use the `@/` syntax for imports.
 - Instead of using `let` for variables that may change based on conditions, use a new function that will return the variables based on conditions instead.
+- For zod schema, always use the `strict` call on objects.

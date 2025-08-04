@@ -1,26 +1,38 @@
 import { z } from 'zod'
 
-export const EnvironmentConfigSchema = z.object({
-  name: z.string().min(1, 'Environment name is required'),
-  environment: z.enum(['dev', 'staging', 'prod']),
-  database: z
-    .object({
-      name: z.string(),
-      user: z.string(),
-    })
-    .optional()
-    .nullable()
-    .default(null),
-  domainName: z.string().optional().nullable().default(null),
-  subdomainNames: z.array(z.string()).optional().default([]),
-})
+export const EnvironmentConfigSchema = z
+  .object({
+    name: z.string().min(1, 'Environment name is required'),
+    environment: z.enum(['dev', 'staging', 'prod']),
+    database: z
+      .object({
+        name: z.string(),
+        user: z.string(),
+      })
+      .strict()
+      .optional()
+      .nullable()
+      .default(null),
+    dns: z
+      .object({
+        domainName: z.string(),
+        subdomainNames: z.array(z.string()),
+      })
+      .strict()
+      .optional()
+      .nullable()
+      .default(null),
+  })
+  .strict()
 
-export const ProjectConfigSchema = z.object({
-  project: z.string().min(1, 'Project ID is required'),
-  environments: z
-    .array(EnvironmentConfigSchema)
-    .min(1, 'At least one environment is required'),
-})
+export const ProjectConfigSchema = z
+  .object({
+    project: z.string().min(1, 'Project ID is required'),
+    environments: z
+      .array(EnvironmentConfigSchema)
+      .min(1, 'At least one environment is required'),
+  })
+  .strict()
 
 export const ConfigSchema = z.array(ProjectConfigSchema)
 

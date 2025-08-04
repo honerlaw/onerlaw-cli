@@ -1,9 +1,8 @@
-export type DatabaseInfo = {
-  name: string
-  user: string
-}
+import { type EnvironmentConfig } from '@/config/schema.mjs'
 
-export function databaseTemplate(database: DatabaseInfo | null): string {
+export function databaseTemplate(
+  database: EnvironmentConfig['database']
+): string {
   if (database === null) {
     return ''
   }

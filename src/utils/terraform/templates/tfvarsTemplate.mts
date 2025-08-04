@@ -1,12 +1,14 @@
-import { databaseTemplate, type DatabaseInfo } from './databaseTemplate.mjs'
+import { databaseTemplate } from './databaseTemplate.mjs'
+import { dnsTemplate } from './dnsTemplate.mjs'
+import { type EnvironmentConfig } from '@/config/schema.mjs'
 
 export function tfvarsTemplate(
   project: string,
   environment: string,
   environmentName: string,
   imageUrl: string,
-  database: DatabaseInfo | null,
-  domainName: string | null = null
+  database: EnvironmentConfig['database'],
+  dns: EnvironmentConfig['dns']
 ): string {
   return `
 # Project configuration
@@ -23,6 +25,6 @@ ${databaseTemplate(database)}
 container_image = "${imageUrl}"
 
 # DNS and Load Balancer
-${domainName ? `domain_name = "${domainName}"` : '# domain_name = "example.com"  # Uncomment and set to enable load balancer and DNS'}
+${dnsTemplate(dns)}
 `
 }

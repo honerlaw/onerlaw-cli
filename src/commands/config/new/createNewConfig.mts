@@ -4,8 +4,7 @@ import {
   getEnvironment,
   getEnvironmentName,
   getDatabase,
-  getDomainName,
-  getSubdomainNames,
+  getDNS,
 } from '@/config/prompts/index.mjs'
 
 export async function createNewConfig(): Promise<ProjectConfig[]> {
@@ -14,15 +13,13 @@ export async function createNewConfig(): Promise<ProjectConfig[]> {
   const environmentName = await getEnvironmentName()
 
   const database = await getDatabase()
-  const domainName = await getDomainName()
-  const subdomainNames = domainName ? await getSubdomainNames() : []
+  const dns = await getDNS()
 
   const environmentConfig: EnvironmentConfig = {
     name: environmentName,
     environment,
     database,
-    domainName,
-    subdomainNames,
+    dns,
   }
 
   return [
