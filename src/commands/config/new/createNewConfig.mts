@@ -25,7 +25,7 @@ export async function createNewConfig(): Promise<ProjectConfig[]> {
   return [
     {
       project,
-      environments: [environmentConfig],
+      environment: environmentConfig,
     },
   ]
 }

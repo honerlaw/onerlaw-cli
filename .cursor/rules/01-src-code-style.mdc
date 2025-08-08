@@ -31,3 +31,4 @@ alwaysApply: false
 - For zod schema, always use the `strict` call on objects.
 - There should only ever be one function in a given file. If there are multiple functions or supporting functions in a file, split them into their own files.
 - The file should be named identically to the function defined within the file.
+- Never use `let`, always use `const`. If the variable will need to be re-assigned, move the logic that would re-assign the value to a function, and have the function return the value. The function should then be called to assign the value to the `const` variable.

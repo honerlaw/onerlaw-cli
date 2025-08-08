@@ -3,7 +3,6 @@ import { writeFile, checkFileAccess } from '@/utils/files.mjs'
 import { validateConfig } from '@/config/schema.mjs'
 import { CONFIG_PATH } from '@/config/constants.mjs'
 import { loadConfig } from '@/config/loader.mjs'
-import { addNewConfiguration } from './addNewConfiguration.mjs'
 import { createNewConfig } from './createNewConfig.mjs'
 
 export async function newConfigAction(): Promise<void> {
@@ -15,7 +14,8 @@ export async function newConfigAction(): Promise<void> {
     if (configExists) {
       try {
         const existingConfig = await loadConfig(CONFIG_PATH)
-        config = await addNewConfiguration(existingConfig)
+        const newEntries = await createNewConfig()
+        config = [...existingConfig, ...newEntries]
         logSuccess('Added new configuration to existing config file')
       } catch (error: unknown) {
         const errorMessage =

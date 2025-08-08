@@ -30,10 +30,10 @@ export async function loadConfigFromPrompt(
     throw new Error('No projects found in config file')
   }
 
-  // If only one project with one environment, return it directly
-  if (projects.length === 1 && projects[0].environments.length === 1) {
+  // If only one project, return it directly
+  if (projects.length === 1) {
     const project = projects[0]
-    const environment = project.environments[0]
+    const environment = project.environment
     return {
       selection: {
         project: project.project,
@@ -46,7 +46,7 @@ export async function loadConfigFromPrompt(
     }
   }
 
-  // Create choices for all project-environment combinations
+  // Create choices for all project configurations
   const choices: Array<{
     name: string
     value: LoadedConfig
@@ -54,22 +54,21 @@ export async function loadConfigFromPrompt(
   }> = []
 
   for (const project of projects) {
-    for (const environment of project.environments) {
-      choices.push({
-        name: `${project.project} - ${environment.name} (${environment.environment})`,
-        value: {
-          selection: {
-            project: project.project,
-            environment: environment.environment,
-            environmentName: environment.name,
-            database: environment.database,
-            dns: environment.dns,
-          },
-          configs: projects,
+    const environment = project.environment
+    choices.push({
+      name: `${project.project} - ${environment.name} (${environment.environment})`,
+      value: {
+        selection: {
+          project: project.project,
+          environment: environment.environment,
+          environmentName: environment.name,
+          database: environment.database,
+          dns: environment.dns,
         },
-        description: `Project: ${project.project}, Environment: ${environment.name}`,
-      })
-    }
+        configs: projects,
+      },
+      description: `Project: ${project.project}, Environment: ${environment.name}`,
+    })
   }
 
   return await select('Please select a configuration:', choices, -1)

@@ -1,0 +1,8 @@
+export const UPDATE_PROJECT_ID_PROMPT = 'Update project id? Current: '
+export const UPDATE_ENV_NAME_PROMPT = 'Update environment name? Current: '
+export const UPDATE_ENV_TYPE_PROMPT = 'Update environment type? Current: '
+export const UPDATE_DATABASE_PROMPT_PREFIX = 'Update database? '
+export const UPDATE_DNS_PROMPT_PREFIX = 'Update DNS? '
+export const STATUS_CURRENT_VALUE_SET = 'Current value set'
+export const STATUS_CURRENTLY_NONE = 'Currently none'
+export const LOG_MODIFYING_PROJECT_PREFIX = 'Modifying project: '

@@ -9,7 +9,7 @@ export async function selectProjectToModify(
   }
 
   const projectChoices = existingConfig.map((project, index) => ({
-    name: `${project.project} (${project.environments.length} environments)`,
+    name: `${project.project} (${project.environment.name})`,
     value: index,
   }))
 

@@ -28,9 +28,7 @@ export const EnvironmentConfigSchema = z
 export const ProjectConfigSchema = z
   .object({
     project: z.string().min(1, 'Project ID is required'),
-    environments: z
-      .array(EnvironmentConfigSchema)
-      .min(1, 'At least one environment is required'),
+    environment: EnvironmentConfigSchema,
   })
   .strict()
 

@@ -8,11 +8,8 @@ export async function cleanupStateBucket(config: LoadedConfig): Promise<void> {
   try {
     const projectId = config.selection.project
 
-    // only delete the bucket if there is only one environment
-    if (
-      config.configs.find(config => config.project === projectId)?.environments
-        .length === 1
-    ) {
+    // only delete the bucket if there is only one project entry for this id
+    if (config.configs.filter(cfg => cfg.project === projectId).length === 1) {
       await deleteBucket(projectId)
     } else {
       logWarning(
