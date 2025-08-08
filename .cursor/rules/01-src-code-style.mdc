@@ -29,3 +29,5 @@ alwaysApply: false
 - Use the `@/` syntax for imports.
 - Instead of using `let` for variables that may change based on conditions, use a new function that will return the variables based on conditions instead.
 - For zod schema, always use the `strict` call on objects.
+- There should only ever be one function in a given file. If there are multiple functions or supporting functions in a file, split them into their own files.
+- The file should be named identically to the function defined within the file.
