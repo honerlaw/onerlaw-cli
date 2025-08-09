@@ -5,8 +5,8 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
-.terraform/
-.terraform.lock.hcl
-backend.tfbackend
-terraform.tfvars
 onerlaw.config.json
+terraform/.terraform/**
+terraform/.terraform.lock.hcl
+terraform/backend.tfbackend
+terraform/terraform.tfvars
