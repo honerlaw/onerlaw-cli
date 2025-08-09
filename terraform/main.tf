@@ -111,6 +111,7 @@ module "cloud_run" {
   region       = var.region
   image        = var.container_image
 
+  cloud_sql_enabled                 = local.cloud_sql_enabled
   database_instance_connection_name = local.cloud_sql_enabled ? module.cloud_sql[0].instance_connection_name : null
   database_name                     = var.database_name
   database_user                     = var.database_user

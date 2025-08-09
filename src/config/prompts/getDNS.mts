@@ -23,9 +23,9 @@ export async function getDNS(
     return null
   }
 
-  const domainName = await input('Enter domain name:')
+  const domainName = await input('Enter domain name (e.g. example.com):')
   const subdomainInput = await input(
-    'Enter subdomain names (comma-separated, optional, press Enter to skip):'
+    'Enter subdomain names (e.g. www, api, etc.) (comma-separated, optional, press Enter to skip):'
   )
 
   const subdomainNames = subdomainInput

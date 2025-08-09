@@ -7,7 +7,7 @@ resource "google_service_account" "cloud_run_sa" {
 
 # Grant Cloud Run service account access to Cloud SQL (only if database is configured)
 resource "google_project_iam_member" "cloud_run_sql_client" {
-  count   = var.database_instance_connection_name != null ? 1 : 0
+  count   = var.cloud_sql_enabled ? 1 : 0
   project = var.project_id
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
@@ -52,7 +52,7 @@ resource "google_cloud_run_v2_service" "service" {
 
       # Database environment variables (only if database is configured)
       dynamic "env" {
-        for_each = var.database_instance_connection_name != null ? [1] : []
+        for_each = var.cloud_sql_enabled ? [1] : []
         content {
           name  = "DB_HOST"
           value = "/cloudsql/${var.database_instance_connection_name}"
@@ -60,7 +60,7 @@ resource "google_cloud_run_v2_service" "service" {
       }
 
       dynamic "env" {
-        for_each = var.database_name != null ? [1] : []
+        for_each = var.cloud_sql_enabled ? [1] : []
         content {
           name  = "DB_NAME"
           value = var.database_name
@@ -68,7 +68,7 @@ resource "google_cloud_run_v2_service" "service" {
       }
 
       dynamic "env" {
-        for_each = var.database_user != null ? [1] : []
+        for_each = var.cloud_sql_enabled ? [1] : []
         content {
           name  = "DB_USER"
           value = var.database_user
@@ -82,7 +82,7 @@ resource "google_cloud_run_v2_service" "service" {
 
       # Use Secret Manager for database password (only if database is configured)
       dynamic "env" {
-        for_each = var.database_password_secret_name != null ? [1] : []
+        for_each = var.cloud_sql_enabled ? [1] : []
         content {
           name = "DB_PASSWORD"
           value_source {
@@ -110,7 +110,7 @@ resource "google_cloud_run_v2_service" "service" {
 
       # Add Cloud SQL connection (only if database is configured)
       dynamic "volume_mounts" {
-        for_each = var.database_instance_connection_name != null ? [1] : []
+        for_each = var.cloud_sql_enabled ? [1] : []
         content {
           name       = "cloudsql"
           mount_path = "/cloudsql"
@@ -120,7 +120,7 @@ resource "google_cloud_run_v2_service" "service" {
 
     # Add Cloud SQL volumes (only if database is configured)
     dynamic "volumes" {
-      for_each = var.database_instance_connection_name != null ? [1] : []
+      for_each = var.cloud_sql_enabled ? [1] : []
       content {
         name = "cloudsql"
         cloud_sql_instance {

@@ -23,22 +23,43 @@ variable "image" {
   type        = string
 }
 
+variable "cloud_sql_enabled" {
+  description = "Whether Cloud SQL is enabled for this service"
+  type        = bool
+  default     = false
+}
+
 variable "database_instance_connection_name" {
   description = "The connection name of the Cloud SQL instance"
   type        = string
   default     = null
+  
+  validation {
+    condition     = !var.cloud_sql_enabled || var.database_instance_connection_name != null
+    error_message = "database_instance_connection_name is required when cloud_sql_enabled is true."
+  }
 }
 
 variable "database_name" {
   description = "The name of the database"
   type        = string
   default     = null
+  
+  validation {
+    condition     = !var.cloud_sql_enabled || var.database_name != null
+    error_message = "database_name is required when cloud_sql_enabled is true."
+  }
 }
 
 variable "database_user" {
   description = "The database user name"
   type        = string
   default     = null
+  
+  validation {
+    condition     = !var.cloud_sql_enabled || var.database_user != null
+    error_message = "database_user is required when cloud_sql_enabled is true."
+  }
 }
 
 variable "vpc_connector_name" {
@@ -90,4 +111,9 @@ variable "database_password_secret_name" {
   description = "The name of the Secret Manager secret containing the database password"
   type        = string
   default     = null
+  
+  validation {
+    condition     = !var.cloud_sql_enabled || var.database_password_secret_name != null
+    error_message = "database_password_secret_name is required when cloud_sql_enabled is true."
+  }
 } 
