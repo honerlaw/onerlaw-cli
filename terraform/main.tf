@@ -24,8 +24,24 @@ terraform {
 # Local variables for conditional resource creation
 locals {
   cloud_sql_enabled     = var.database_name != null && var.database_user != null
-  load_balancer_enabled = var.domain_name != null
+  load_balancer_enabled = length(var.apps) > 0 && anytrue([for app in var.apps : app.dns != null])
   pubsub_enabled        = var.pubsub_topic_name != null
+  apps_enabled          = length(var.apps) > 0
+
+  # Collect all subdomains from apps that have DNS configuration
+  all_subdomains = flatten([
+    for app in var.apps :
+    app.dns != null ? app.dns.subdomainNames : []
+  ])
+
+  # Get all unique domain names from apps with DNS configuration
+  all_domains = distinct([
+    for app in var.apps :
+    app.dns != null ? app.dns.domainName : null
+  ])
+
+  # Get the primary domain (first one found)
+  primary_domain = length(local.all_domains) > 0 ? local.all_domains[0] : null
 }
 
 # Create service account for Terraform backend access
@@ -103,15 +119,17 @@ module "cloud_sql" {
   depends_on = [google_project_service.required_apis, module.networking]
 }
 
-# Create Cloud Run service
-module "cloud_run" {
+# Create Cloud Run services for each app
+module "cloud_run_services" {
+  count  = local.apps_enabled ? length(var.apps) : 0
   source = "./modules/cloud-run"
 
   project_id   = var.project_id
   environment  = var.environment
-  service_name = "${var.environment}-${var.environment_name}"
+  service_name = "${var.environment}-${var.environment_name}-${var.apps[count.index].name}"
   region       = var.region
-  image        = var.container_image
+  image        = var.apps[count.index].container_image
+  port         = var.apps[count.index].port != null ? var.apps[count.index].port : 3000
 
   cloud_sql_enabled                 = local.cloud_sql_enabled
   database_instance_connection_name = local.cloud_sql_enabled ? module.cloud_sql[0].instance_connection_name : null
@@ -136,23 +154,23 @@ module "artifact_registry" {
   depends_on = [google_project_service.required_apis]
 }
 
-# Create Load Balancer (only if domain_name is provided)
+# Create Load Balancer (only if apps have DNS configuration)
 module "load_balancer" {
   count  = local.load_balancer_enabled ? 1 : 0
   source = "./modules/load-balancer"
 
-  environment            = var.environment
-  environment_name       = var.environment_name
-  project_id             = var.project_id
-  region                 = var.region
-  domains                = concat([var.domain_name], [for subdomain in var.subdomain_names : "${subdomain}.${var.domain_name}"])
-  cloud_run_service_name = module.cloud_run.service_name
-  network                = module.networking.vpc_network
+  environment        = var.environment
+  environment_name   = var.environment_name
+  project_id         = var.project_id
+  region             = var.region
+  domains            = concat([local.primary_domain], local.all_subdomains)
+  cloud_run_services = local.apps_enabled ? module.cloud_run_services[*] : []
+  network            = module.networking.vpc_network
 
-  depends_on = [google_project_service.required_apis, module.cloud_run, module.networking]
+  depends_on = [google_project_service.required_apis, module.cloud_run_services, module.networking]
 }
 
-# Create DNS records (only if domain_name is provided)
+# Create DNS records (only if apps have DNS configuration)
 module "dns" {
   count  = local.load_balancer_enabled ? 1 : 0
   source = "./modules/dns"
@@ -160,9 +178,9 @@ module "dns" {
   environment              = var.environment
   environment_name         = var.environment_name
   project_id               = var.project_id
-  domain_name              = var.domain_name
+  domain_name              = local.primary_domain
   load_balancer_ip_address = module.load_balancer[0].ip_address
-  subdomain_names          = var.subdomain_names
+  subdomain_names          = local.all_subdomains
   create_www_record        = false
 
   depends_on = [module.load_balancer]
@@ -173,12 +191,12 @@ module "pubsub" {
   count  = local.pubsub_enabled ? 1 : 0
   source = "./modules/pubsub"
 
-  project_id       = var.project_id
-  environment      = var.environment
-  environment_name = var.environment_name
-  enabled          = local.pubsub_enabled
-  topic_name       = var.pubsub_topic_name
-  cloud_run_service_account = module.cloud_run.service_account_email
+  project_id                 = var.project_id
+  environment                = var.environment
+  environment_name           = var.environment_name
+  enabled                    = local.pubsub_enabled
+  topic_name                 = var.pubsub_topic_name
+  cloud_run_service_accounts = local.apps_enabled ? module.cloud_run_services[*].service_account_email : []
 
   # Optional: Customize Pub/Sub settings
   message_retention_duration = var.pubsub_message_retention_duration

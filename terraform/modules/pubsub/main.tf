@@ -73,24 +73,26 @@ resource "google_pubsub_subscription_iam_binding" "subscription_iam" {
   depends_on = [google_pubsub_subscription.subscription]
 }
 
-# Automatically grant Cloud Run service account publisher access to the topic
-resource "google_pubsub_topic_iam_binding" "cloud_run_topic_publisher" {
-  count  = var.enabled && var.cloud_run_service_account != null ? 1 : 0
+# Automatically grant Cloud Run service accounts publisher access to the topic
+resource "google_pubsub_topic_iam_binding" "cloud_run_topic_publishers" {
+  for_each = var.enabled && length(var.cloud_run_service_accounts) > 0 ? toset(var.cloud_run_service_accounts) : []
+
   project = var.project_id
   topic   = google_pubsub_topic.topic[0].name
   role    = "roles/pubsub.publisher"
-  members = ["serviceAccount:${var.cloud_run_service_account}"]
+  members = ["serviceAccount:${each.value}"]
 
   depends_on = [google_pubsub_topic.topic]
 }
 
-# Automatically grant Cloud Run service account subscriber access to the subscription
-resource "google_pubsub_subscription_iam_binding" "cloud_run_subscription_subscriber" {
-  count  = var.enabled && var.cloud_run_service_account != null ? 1 : 0
+# Automatically grant Cloud Run service accounts subscriber access to the subscription
+resource "google_pubsub_subscription_iam_binding" "cloud_run_subscription_subscribers" {
+  for_each = var.enabled && length(var.cloud_run_service_accounts) > 0 ? toset(var.cloud_run_service_accounts) : []
+
   project      = var.project_id
   subscription = google_pubsub_subscription.subscription[0].name
   role         = "roles/pubsub.subscriber"
-  members      = ["serviceAccount:${var.cloud_run_service_account}"]
+  members      = ["serviceAccount:${each.value}"]
 
   depends_on = [google_pubsub_subscription.subscription]
 }

@@ -15,14 +15,14 @@ output "url_map_name" {
   value       = google_compute_url_map.lb_url_map.name
 }
 
-output "backend_service_name" {
-  description = "The name of the backend service"
-  value       = google_compute_backend_service.lb_backend.name
+output "backend_service_names" {
+  description = "The names of all backend services"
+  value       = google_compute_backend_service.lb_backend_services[*].name
 }
 
-output "neg_name" {
-  description = "The name of the Network Endpoint Group"
-  value       = google_compute_region_network_endpoint_group.lb_neg.name
+output "neg_names" {
+  description = "The names of all Network Endpoint Groups"
+  value       = google_compute_region_network_endpoint_group.lb_negs[*].name
 }
 
 output "ssl_certificate_name" {

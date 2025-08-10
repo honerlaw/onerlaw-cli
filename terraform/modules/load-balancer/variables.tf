@@ -50,13 +50,16 @@ variable "domains" {
   }
 }
 
-variable "cloud_run_service_name" {
-  description = "The name of the Cloud Run service to route traffic to"
-  type        = string
+variable "cloud_run_services" {
+  description = "List of Cloud Run services to route traffic to"
+  type = list(object({
+    service_name = string
+    service_url  = string
+  }))
 
   validation {
-    condition     = length(var.cloud_run_service_name) >= 1 && length(var.cloud_run_service_name) <= 63
-    error_message = "Cloud Run service name must be between 1 and 63 characters."
+    condition     = length(var.cloud_run_services) > 0
+    error_message = "At least one Cloud Run service must be provided."
   }
 }
 

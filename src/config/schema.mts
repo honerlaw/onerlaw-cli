@@ -6,27 +6,37 @@ export const EnvironmentConfigSchema = z
     environment: z.enum(['dev', 'staging', 'prod']),
     database: z
       .object({
-        name: z.string(),
-        user: z.string(),
+        name: z.string().min(1, 'Database name is required'),
+        user: z.string().min(1, 'Database user is required'),
       })
       .strict()
-      .optional()
-      .nullable()
-      .default(null),
-    dns: z
-      .object({
-        domainName: z.string(),
-        subdomainNames: z.array(z.string()),
-      })
-      .strict()
-      .optional()
       .nullable()
       .default(null),
     pubsub: z
       .object({
-        topic: z.string(),
+        topic: z.string().min(1, 'Pub/Sub topic is required'),
       })
       .strict()
+      .nullable()
+      .default(null),
+    apps: z
+      .array(
+        z
+          .object({
+            name: z.string().min(1, 'App name is required'),
+            port: z.number().int().positive().optional(),
+            dns: z
+              .object({
+                domainName: z.string().min(1, 'Domain name is required'),
+                subdomainNames: z
+                  .array(z.string())
+                  .min(1, 'At least one subdomain is required'),
+              })
+              .strict()
+              .optional(),
+          })
+          .strict()
+      )
       .optional()
       .nullable()
       .default(null),

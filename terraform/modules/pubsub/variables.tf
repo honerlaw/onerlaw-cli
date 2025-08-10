@@ -25,10 +25,10 @@ variable "topic_name" {
   default     = null
 }
 
-variable "cloud_run_service_account" {
-  description = "The Cloud Run service account email to grant Pub/Sub permissions to"
-  type        = string
-  default     = null
+variable "cloud_run_service_accounts" {
+  description = "List of Cloud Run service account emails to grant Pub/Sub permissions to"
+  type        = list(string)
+  default     = []
 }
 
 variable "message_retention_duration" {

@@ -1,11 +1,17 @@
-output "cloud_run_service_url" {
-  description = "The URL of the deployed Cloud Run service"
-  value       = module.cloud_run.service_url
+output "cloud_run_services" {
+  description = "Information about all deployed Cloud Run services"
+  value = local.apps_enabled ? [
+    for i, service in module.cloud_run_services : {
+      name = service.service_name
+      url  = service.service_url
+      port = var.apps[i].port != null ? var.apps[i].port : 3000
+    }
+  ] : []
 }
 
-output "cloud_run_service_name" {
-  description = "The name of the Cloud Run service"
-  value       = module.cloud_run.service_name
+output "cloud_run_service_accounts" {
+  description = "The service account emails used by Cloud Run services"
+  value       = local.apps_enabled ? module.cloud_run_services[*].service_account_email : []
 }
 
 output "database_instance_name" {
@@ -75,9 +81,14 @@ output "load_balancer_url_map_name" {
   value       = local.load_balancer_enabled ? module.load_balancer[0].url_map_name : null
 }
 
-output "load_balancer_backend_service_name" {
-  description = "The name of the backend service"
-  value       = local.load_balancer_enabled ? module.load_balancer[0].backend_service_name : null
+output "load_balancer_backend_service_names" {
+  description = "The names of all backend services"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].backend_service_names : null
+}
+
+output "load_balancer_neg_names" {
+  description = "The names of all Network Endpoint Groups"
+  value       = local.load_balancer_enabled ? module.load_balancer[0].neg_names : null
 }
 
 output "load_balancer_ssl_certificate_name" {

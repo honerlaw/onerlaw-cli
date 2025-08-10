@@ -1,15 +1,17 @@
 import { checkImageExists } from '@/utils/checkImageExists.mjs'
+import { GCR_HOSTNAME } from '@/commands/build/constants.mjs'
 
 const HELLO_WORLD_IMAGE = 'gcr.io/google-samples/hello-app:1.0'
 
 export async function getImageFullyQualifiedName(
+  appName: string,
   project: string,
   environment: string,
   environmentName: string
 ): Promise<string> {
   const registryName = `${environment}-${environmentName}`
-  const hostname = `us-central1-docker.pkg.dev`
-  const imageName = 'app-server'
+  const hostname = GCR_HOSTNAME
+  const imageName = appName
   const tag = 'latest'
   const fullImageName = `${hostname}/${project}/${registryName}/${imageName}:${tag}`
 

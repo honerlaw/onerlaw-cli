@@ -13,13 +13,19 @@ export type LoadedConfig = {
       name: string
       user: string
     } | null
-    dns: {
-      domainName: string
-      subdomainNames: string[]
-    } | null
     pubsub: {
       topic: string
     } | null
+    apps:
+      | {
+          name: string
+          port?: number
+          dns?: {
+            domainName: string
+            subdomainNames: string[]
+          }
+        }[]
+      | null
   }
   configs: Config
 }
@@ -43,8 +49,8 @@ export async function loadConfigFromPrompt(
         environment: environment.environment,
         environmentName: environment.name,
         database: environment.database,
-        dns: environment.dns,
         pubsub: environment.pubsub,
+        apps: environment.apps,
       },
       configs: projects,
     }
@@ -67,8 +73,8 @@ export async function loadConfigFromPrompt(
           environment: environment.environment,
           environmentName: environment.name,
           database: environment.database,
-          dns: environment.dns,
           pubsub: environment.pubsub,
+          apps: environment.apps,
         },
         configs: projects,
       },

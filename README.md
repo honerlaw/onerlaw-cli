@@ -105,6 +105,75 @@ onerlaw-cli secret \
 - `-e, --environment`: Environment type (dev, staging, prod)
 - `-n, --environment-name`: Environment name
 
+## Apps Configuration Feature
+
+The CLI now supports configuring multiple applications per environment, each with its own container image and optional port specification. This enables deploying microservices architectures where each service runs independently on Cloud Run.
+
+### Schema
+
+Each app in the `apps` array contains:
+
+```typescript
+{
+  name: string              // Required: App name (1-63 characters)
+  port?: number            // Optional: Port number (1-65535)
+}
+```
+
+### Usage
+
+When creating or modifying configurations, the CLI will prompt for:
+
+1. **App name**: A unique identifier for the application
+2. **Port specification**: Optional custom port (defaults to 3000 if not specified)
+
+**Note**: Container images are automatically derived based on the app name, project ID, environment, and environment name using the pattern: `us-central1-docker.pkg.dev/{project_id}/{environment}-{environment_name}/{app_name}:latest`
+
+### Terraform Integration
+
+The infrastructure automatically creates:
+
+- **Multiple Cloud Run services**: One service per app with individual configurations
+- **Load balancer routing**: Traffic distribution across all configured services
+- **Service accounts**: Individual service accounts for each app with proper IAM permissions
+- **Pub/Sub integration**: Each service gets appropriate publisher/subscriber permissions
+
+### Example Configuration
+
+```json
+{
+  "apps": [
+    {
+      "name": "api-server",
+      "port": 8080
+    },
+    {
+      "name": "worker",
+      "port": 9090
+    },
+    {
+      "name": "monitoring"
+    }
+  ]
+}
+```
+
+### Example Generated Container Images
+
+For a project with ID `my-project`, environment `dev`, and environment name `my-app`:
+
+- **api-server**: `us-central1-docker.pkg.dev/my-project/dev-my-app/api-server:latest`
+- **worker**: `us-central1-docker.pkg.dev/my-project/dev-my-app/worker:latest`
+- **monitoring**: `us-central1-docker.pkg.dev/my-project/dev-my-app/monitoring:latest`
+
+### Benefits
+
+- **Microservices architecture**: Deploy multiple independent services
+- **Individual scaling**: Each service can scale independently based on demand
+- **Separate configurations**: Different ports, resources, and environment variables per service
+- **Load balancing**: Automatic traffic distribution across services
+- **Isolated permissions**: Each service has its own service account and IAM roles
+
 ## Architecture Overview
 
 The Onerlaw CLI creates a comprehensive Google Cloud infrastructure with the following components:

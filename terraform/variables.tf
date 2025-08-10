@@ -39,12 +39,6 @@ variable "database_user" {
   default     = null
 }
 
-variable "container_image" {
-  description = "The container image to deploy to Cloud Run"
-  type        = string
-  default     = "gcr.io/PROJECT_ID/IMAGE:TAG"
-}
-
 variable "database_tier" {
   description = "The Cloud SQL instance tier"
   type        = string
@@ -91,23 +85,7 @@ variable "cloud_run_secrets" {
   default = []
 }
 
-# DNS Variables
-variable "domain_name" {
-  description = "The primary domain name for DNS records (e.g., 'example.com'). If provided, DNS records and load balancer will be created automatically."
-  type        = string
-  default     = null
 
-  validation {
-    condition     = var.domain_name == null || can(regex("^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", var.domain_name))
-    error_message = "Domain name must be a valid domain format if provided."
-  }
-}
-
-variable "subdomain_names" {
-  description = "List of subdomain names to create A records for (e.g., ['api', 'admin', 'staging'])"
-  type        = list(string)
-  default     = []
-}
 
 # Pub/Sub Variables
 variable "pubsub_topic_name" {
@@ -150,6 +128,37 @@ variable "pubsub_subscription_iam_members" {
   description = "List of IAM members to grant subscriber role on the subscription"
   type        = list(string)
   default     = []
+}
+
+# Apps Variables
+variable "apps" {
+  description = "List of applications to deploy, each with a name, container image, optional port, and optional DNS configuration"
+  type = list(object({
+    name            = string
+    container_image = string
+    port            = optional(number)
+    dns = optional(object({
+      domainName     = string
+      subdomainNames = list(string)
+    }))
+  }))
+  default = []
+
+  validation {
+    condition = alltrue([
+      for app in var.apps :
+      length(app.name) >= 1 && length(app.name) <= 63
+    ])
+    error_message = "App names must be between 1 and 63 characters."
+  }
+
+  validation {
+    condition = alltrue([
+      for app in var.apps :
+      app.port == null || (app.port >= 1 && app.port <= 65535)
+    ])
+    error_message = "App ports must be between 1 and 65535 if specified."
+  }
 }
 
 

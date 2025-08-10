@@ -20,6 +20,14 @@ resource "google_project_iam_member" "cloud_run_secret_accessor" {
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
 }
 
+# Grant Cloud Run service account access to the specific database password secret
+resource "google_secret_manager_secret_iam_member" "cloud_run_db_password_accessor" {
+  count     = var.cloud_sql_enabled ? 1 : 0
+  secret_id = var.database_password_secret_name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
 # Grant Cloud Run service account access to Pub/Sub
 resource "google_project_iam_member" "cloud_run_pubsub_publisher" {
   project = var.project_id

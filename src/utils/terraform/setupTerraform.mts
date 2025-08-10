@@ -1,31 +1,29 @@
 import { writeFile } from '@/utils/files.mjs'
 import { tfvarsTemplate } from './templates/tfvarsTemplate.mjs'
 import { backendTemplate } from './templates/backendTemplate.mjs'
-import { getImageFullyQualifiedName } from '@/commands/deploy/getImageFullyQualifiedName.mjs'
 import { type LoadedConfig } from '@/config/loadConfigFromPrompt.mjs'
 import { getBackendConfigPath, getTfvarsPath } from '@/utils/paths.mjs'
 
 export async function setupTerraform(config: LoadedConfig): Promise<void> {
   const {
-    selection: { project, environment, environmentName, database, dns, pubsub },
+    selection: {
+      project,
+      environment,
+      environmentName,
+      database,
+      pubsub,
+      apps,
+    },
   } = config
 
-  // Get the fully qualified image name
-  const imageUrl = await getImageFullyQualifiedName(
-    project,
-    environment,
-    environmentName
-  )
-
   // Generate terraform.tfvars
-  const tfvarsContent = tfvarsTemplate(
+  const tfvarsContent = await tfvarsTemplate(
     project,
     environment,
     environmentName,
-    imageUrl,
     database,
-    dns,
-    pubsub
+    pubsub,
+    apps
   )
 
   await writeFile(getTfvarsPath(), tfvarsContent)

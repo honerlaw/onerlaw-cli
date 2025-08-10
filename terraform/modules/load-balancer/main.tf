@@ -87,29 +87,61 @@ resource "google_compute_url_map" "lb_http_redirect" {
 resource "google_compute_url_map" "lb_url_map" {
   name            = "${local.base_name}-lb-url-map"
   project         = var.project_id
-  default_service = google_compute_backend_service.lb_backend.id
+  default_service = google_compute_backend_service.lb_backend_default.id
+
+  # Route traffic based on hostname to different backend services
+  dynamic "host_rule" {
+    for_each = var.cloud_run_services
+    content {
+      hosts        = var.domains
+      path_matcher = "path-matcher-${host_rule.key}"
+    }
+  }
+
+  dynamic "path_matcher" {
+    for_each = var.cloud_run_services
+    content {
+      name            = "path-matcher-${path_matcher.key}"
+      default_service = google_compute_backend_service.lb_backend_services[path_matcher.key].id
+    }
+  }
 }
 
-# Create backend service for Cloud Run (no health checks for serverless NEGs)
-resource "google_compute_backend_service" "lb_backend" {
-  name        = "${local.base_name}-lb-backend"
+# Create backend services for each Cloud Run service
+resource "google_compute_backend_service" "lb_backend_services" {
+  count       = length(var.cloud_run_services)
+  name        = "${local.base_name}-lb-backend-${count.index}"
   project     = var.project_id
   protocol    = "HTTP"
   port_name   = "http"
   timeout_sec = 30
 
   backend {
-    group = google_compute_region_network_endpoint_group.lb_neg.id
+    group = google_compute_region_network_endpoint_group.lb_negs[count.index].id
   }
 }
 
-# Create Network Endpoint Group (NEG) for Cloud Run service
-resource "google_compute_region_network_endpoint_group" "lb_neg" {
-  name                  = "${local.base_name}-lb-neg"
+# Create a default backend service (first service)
+resource "google_compute_backend_service" "lb_backend_default" {
+  name        = "${local.base_name}-lb-backend-default"
+  project     = var.project_id
+  protocol    = "HTTP"
+  port_name   = "http"
+  timeout_sec = 30
+
+  backend {
+    group = google_compute_region_network_endpoint_group.lb_negs[0].id
+  }
+}
+
+# Create Network Endpoint Groups (NEGs) for each Cloud Run service
+resource "google_compute_region_network_endpoint_group" "lb_negs" {
+  count                 = length(var.cloud_run_services)
+  name                  = "${local.base_name}-lb-neg-${count.index}"
   project               = var.project_id
   region                = var.region
   network_endpoint_type = "SERVERLESS"
   cloud_run {
-    service = var.cloud_run_service_name
+    service = var.cloud_run_services[count.index].service_name
   }
 } 

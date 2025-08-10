@@ -1,17 +1,16 @@
 import { databaseTemplate } from './databaseTemplate.mjs'
-import { dnsTemplate } from './dnsTemplate.mjs'
 import { pubsubTemplate } from './pubsubTemplate.mjs'
+import { appsTemplate } from './appsTemplate.mjs'
 import { type EnvironmentConfig } from '@/config/schema.mjs'
 
-export function tfvarsTemplate(
+export async function tfvarsTemplate(
   project: string,
   environment: string,
   environmentName: string,
-  imageUrl: string,
   database: EnvironmentConfig['database'],
-  dns: EnvironmentConfig['dns'],
-  pubsub: EnvironmentConfig['pubsub']
-): string {
+  pubsub: EnvironmentConfig['pubsub'],
+  apps: EnvironmentConfig['apps']
+): Promise<string> {
   return `
 # Project configuration
 project_id = "${project}"
@@ -23,13 +22,10 @@ region = "us-central1"
 
 ${databaseTemplate(database)}
 
-# Cloud Run
-container_image = "${imageUrl}"
-
-# DNS and Load Balancer
-${dnsTemplate(dns)}
-
 # Pub/Sub
 ${pubsubTemplate(pubsub)}
+
+# Apps
+${await appsTemplate(apps, project, environment, environmentName)}
 `
 }
