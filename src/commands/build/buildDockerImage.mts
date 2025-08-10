@@ -6,12 +6,11 @@ export async function buildDockerImage(
   dockerfilePath: string,
   contextPath: string,
   noCache: boolean,
-  npmToken: string
+  npmToken: string | null
 ): Promise<void> {
   const args = [
     'build',
-    '--secret',
-    `id=${NPM_TOKEN_SECRET_ID}`,
+    ...(npmToken ? (['--secret', `id=${NPM_TOKEN_SECRET_ID}`] as const) : []),
     '--platform',
     DOCKER_PLATFORM,
     '-f',
@@ -26,9 +25,6 @@ export async function buildDockerImage(
   }
 
   logSuccess('Building Docker image...')
-  await runCommand('docker', args, {
-    env: {
-      NPM_TOKEN: npmToken,
-    },
-  })
+  const commandOptions = npmToken ? { env: { NPM_TOKEN: npmToken } } : {}
+  await runCommand('docker', args, commandOptions)
 }
