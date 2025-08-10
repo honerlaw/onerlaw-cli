@@ -63,7 +63,8 @@ resource "google_project_service" "required_apis" {
     "servicenetworking.googleapis.com",
     "vpcaccess.googleapis.com",
     "secretmanager.googleapis.com",
-    "dns.googleapis.com"
+    "dns.googleapis.com",
+    "pubsub.googleapis.com"
   ])
 
   project = var.project_id
@@ -164,4 +165,25 @@ module "dns" {
   create_www_record        = false
 
   depends_on = [module.load_balancer]
+}
+
+# Create Pub/Sub resources (only if enabled)
+module "pubsub" {
+  count  = var.pubsub_enabled ? 1 : 0
+  source = "./modules/pubsub"
+
+  project_id       = var.project_id
+  environment      = var.environment
+  environment_name = var.environment_name
+  enabled          = var.pubsub_enabled
+
+  # Optional: Customize Pub/Sub settings
+  message_retention_duration = var.pubsub_message_retention_duration
+  ack_deadline_seconds       = var.pubsub_ack_deadline_seconds
+  max_delivery_attempts      = var.pubsub_max_delivery_attempts
+  dead_letter_topic          = var.pubsub_dead_letter_topic
+  topic_iam_members          = var.pubsub_topic_iam_members
+  subscription_iam_members   = var.pubsub_subscription_iam_members
+
+  depends_on = [google_project_service.required_apis]
 } 

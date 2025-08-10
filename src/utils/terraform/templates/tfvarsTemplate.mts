@@ -1,5 +1,6 @@
 import { databaseTemplate } from './databaseTemplate.mjs'
 import { dnsTemplate } from './dnsTemplate.mjs'
+import { pubsubTemplate } from './pubsubTemplate.mjs'
 import { type EnvironmentConfig } from '@/config/schema.mjs'
 
 export function tfvarsTemplate(
@@ -8,7 +9,8 @@ export function tfvarsTemplate(
   environmentName: string,
   imageUrl: string,
   database: EnvironmentConfig['database'],
-  dns: EnvironmentConfig['dns']
+  dns: EnvironmentConfig['dns'],
+  pubsub: EnvironmentConfig['pubsub']
 ): string {
   return `
 # Project configuration
@@ -26,5 +28,8 @@ container_image = "${imageUrl}"
 
 # DNS and Load Balancer
 ${dnsTemplate(dns)}
+
+# Pub/Sub
+${pubsubTemplate(pubsub)}
 `
 }

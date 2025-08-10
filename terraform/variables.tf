@@ -109,4 +109,47 @@ variable "subdomain_names" {
   default     = []
 }
 
+# Pub/Sub Variables
+variable "pubsub_enabled" {
+  description = "Whether to enable Pub/Sub resources"
+  type        = bool
+  default     = false
+}
+
+variable "pubsub_message_retention_duration" {
+  description = "How long to retain unacknowledged messages in the subscription's backlog"
+  type        = string
+  default     = "604800s" # 7 days
+}
+
+variable "pubsub_ack_deadline_seconds" {
+  description = "The maximum time after a subscriber receives a message before the subscriber should acknowledge the message"
+  type        = number
+  default     = 20
+}
+
+variable "pubsub_max_delivery_attempts" {
+  description = "The maximum number of delivery attempts for any message"
+  type        = number
+  default     = 5
+}
+
+variable "pubsub_dead_letter_topic" {
+  description = "The name of the dead letter topic for failed message delivery"
+  type        = string
+  default     = null
+}
+
+variable "pubsub_topic_iam_members" {
+  description = "List of IAM members to grant publisher role on the topic"
+  type        = list(string)
+  default     = []
+}
+
+variable "pubsub_subscription_iam_members" {
+  description = "List of IAM members to grant subscriber role on the subscription"
+  type        = list(string)
+  default     = []
+}
+
 

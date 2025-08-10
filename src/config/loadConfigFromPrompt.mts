@@ -17,6 +17,10 @@ export type LoadedConfig = {
       domainName: string
       subdomainNames: string[]
     } | null
+    pubsub: {
+      topicName: string
+      subscriptionName: string
+    } | null
   }
   configs: Config
 }
@@ -41,6 +45,7 @@ export async function loadConfigFromPrompt(
         environmentName: environment.name,
         database: environment.database,
         dns: environment.dns,
+        pubsub: environment.pubsub,
       },
       configs: projects,
     }
@@ -64,6 +69,7 @@ export async function loadConfigFromPrompt(
           environmentName: environment.name,
           database: environment.database,
           dns: environment.dns,
+          pubsub: environment.pubsub,
         },
         configs: projects,
       },

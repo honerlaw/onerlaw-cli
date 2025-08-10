@@ -7,7 +7,7 @@ import { getBackendConfigPath, getTfvarsPath } from '@/utils/paths.mjs'
 
 export async function setupTerraform(config: LoadedConfig): Promise<void> {
   const {
-    selection: { project, environment, environmentName, database, dns },
+    selection: { project, environment, environmentName, database, dns, pubsub },
   } = config
 
   // Get the fully qualified image name
@@ -24,7 +24,8 @@ export async function setupTerraform(config: LoadedConfig): Promise<void> {
     environmentName,
     imageUrl,
     database,
-    dns
+    dns,
+    pubsub
   )
 
   await writeFile(getTfvarsPath(), tfvarsContent)

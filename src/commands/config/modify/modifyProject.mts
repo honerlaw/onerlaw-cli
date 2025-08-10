@@ -7,6 +7,7 @@ import {
   getEnvironment,
   getDatabase,
   getDNS,
+  getPubsub,
 } from '@/config/prompts/index.mjs'
 
 export async function modifyProject(
@@ -29,6 +30,8 @@ export async function modifyProject(
 
   const updatedDns = await getDNS(currentEnvironment.dns)
 
+  const updatedPubsub = await getPubsub(currentEnvironment.pubsub)
+
   return {
     project: updatedProjectId,
     environment: {
@@ -36,6 +39,7 @@ export async function modifyProject(
       environment: updatedEnvironmentType,
       database: updatedDatabase,
       dns: updatedDns,
+      pubsub: updatedPubsub,
     },
   }
 }

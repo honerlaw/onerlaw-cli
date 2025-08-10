@@ -22,6 +22,15 @@ export const EnvironmentConfigSchema = z
       .optional()
       .nullable()
       .default(null),
+    pubsub: z
+      .object({
+        topicName: z.string(),
+        subscriptionName: z.string(),
+      })
+      .strict()
+      .optional()
+      .nullable()
+      .default(null),
   })
   .strict()
 
