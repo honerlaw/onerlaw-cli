@@ -1,34 +1,29 @@
 import { Command } from 'commander'
 import { logSuccess, logError } from '@/utils/index.mjs'
-import { ENVIRONMENT_OPTION } from '@/utils/options.mjs'
 import { secretAction } from './secretAction.mjs'
 import { type SecretOptions } from './types.mjs'
+import { loadConfigFromPrompt } from '@/config/loadConfigFromPrompt.mjs'
 
-type SecretCommandOptions = SecretOptions
+type SecretCommandOptions = Pick<SecretOptions, 'secretName' | 'secretValue'>
 
 export function registerSecretCommand(program: Command): void {
   program
     .command('secret')
     .description('Create or update a Google Cloud secret')
-    .requiredOption('-p, --project <project-id>', 'Google Cloud Project ID')
     .requiredOption(
       '-s, --secret-name <secret-name>',
       'Name of the secret (without environment prefix)'
     )
     .requiredOption('-v, --secret-value <secret-value>', 'Value of the secret')
-    .addOption(ENVIRONMENT_OPTION.makeOptionMandatory(true))
-    .requiredOption(
-      '-n, --environment-name <environment-name>',
-      'Environment name'
-    )
     .action(async (options: SecretCommandOptions) => {
       try {
+        const config = await loadConfigFromPrompt()
         await secretAction({
-          project: options.project,
+          project: config.selection.project,
           secretName: options.secretName,
           secretValue: options.secretValue,
-          environment: options.environment,
-          environmentName: options.environmentName,
+          environment: config.selection.environment,
+          environmentName: config.selection.environmentName,
         })
         logSuccess('Done!')
       } catch (error: unknown) {
