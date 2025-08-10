@@ -19,6 +19,23 @@ npm install -g @onerlaw/cli
 
 ## Commands Overview
 
+### Command Tree
+
+```mermaid
+graph TD
+    A[onerlaw-cli]
+    A --> B[config]
+    B --> B1[new]
+    B --> B2[modify]
+    B --> B3[remove]
+    A --> C[deploy]
+    A --> D[destroy]
+    A --> E[secret]
+    E --> E1[--env-file <path>]
+    E --> E2[-s, --secret-name <name>]
+    E --> E3[-v, --secret-value <value>]
+```
+
 ### Configuration Management
 
 #### `config new`
@@ -73,6 +90,21 @@ This command:
 4. Initializes Terraform
 5. Applies the infrastructure configuration
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant CLI as onerlaw-cli deploy
+    participant TF as Terraform
+    participant GCS as GCS Bucket
+    U->>CLI: run deploy
+    CLI->>CLI: load config (prompt)
+    CLI->>CLI: setup terraform files
+    CLI->>GCS: create state bucket (if missing)
+    CLI->>TF: terraform init
+    CLI->>TF: terraform apply
+    CLI-->>U: success
+```
+
 ### Infrastructure Destruction
 
 #### `destroy`
@@ -84,26 +116,47 @@ onerlaw-cli destroy
 
 ⚠️ **Warning**: This will permanently delete all resources. Use with caution.
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant CLI as onerlaw-cli destroy
+    participant TF as Terraform
+    participant GCS as State Bucket
+    U->>CLI: run destroy
+    CLI->>CLI: load config (prompt)
+    CLI->>U: confirm destruction
+    alt confirmed
+      CLI->>TF: terraform destroy
+      CLI->>GCS: delete state bucket
+      CLI-->>U: success
+    else cancelled
+      CLI-->>U: cancelled
+    end
+```
+
 ### Secret Management
 
 #### `secret`
-Creates or updates Google Cloud secrets.
+Creates or updates Google Cloud secrets. Project and environment are loaded from your saved configuration via an interactive prompt.
 
-```bash
-onerlaw-cli secret \
-  --project <project-id> \
-  --secret-name <secret-name> \
-  --secret-value <secret-value> \
-  --environment <environment> \
-  --environment-name <environment-name>
-```
+Two usage modes:
 
-**Required Options:**
-- `-p, --project`: Google Cloud Project ID
-- `-s, --secret-name`: Name of the secret (without environment prefix)
-- `-v, --secret-value`: Value of the secret
-- `-e, --environment`: Environment type (dev, staging, prod)
-- `-n, --environment-name`: Environment name
+- Single secret:
+  ```bash
+  onerlaw-cli secret \
+    -s <secret-name> \
+    -v <secret-value>
+  ```
+
+- From .env file (bulk upsert of KEY=VALUE pairs):
+  ```bash
+  onerlaw-cli secret --env-file ./path/to/.env
+  ```
+
+**Options:**
+- `-s, --secret-name <secret-name>`: Name of the secret (without environment prefix)
+- `-v, --secret-value <secret-value>`: Value of the secret
+- `--env-file <path>`: Path to a .env file; when provided, `-s`/`-v` are not required
 
 ## Apps Configuration Feature
 
@@ -235,6 +288,20 @@ graph TB
     TERRAFORM_SA --> STATE_BUCKET
 ```
 
+## Secret Workflow
+
+```mermaid
+flowchart TD
+    A[onerlaw-cli secret] --> B{--env-file provided?}
+    B -- Yes --> C[Parse .env to key/value pairs]
+    C --> D[Build full secret name per key and upsert]
+    D --> E[Done]
+    B -- No --> F{Both -s and -v provided?}
+    F -- Yes --> G[Build full secret name and upsert]
+    G --> E
+    F -- No --> H[Error: provide --env-file or both -s and -v]
+```
+
 ### Infrastructure Components
 
 #### **Networking Module**
@@ -324,7 +391,11 @@ Before using the Onerlaw CLI, ensure you have:
 
 4. **Manage secrets** (if needed):
    ```bash
-   onerlaw-cli secret --project my-project --secret-name db-password --secret-value mypassword --environment dev --environment-name my-app-dev
+   # single secret
+   onerlaw-cli secret -s db-password -v mypassword
+
+   # or bulk from .env file
+   onerlaw-cli secret --env-file ./path/to/.env
    ```
 
 5. **Clean up** (when done):
