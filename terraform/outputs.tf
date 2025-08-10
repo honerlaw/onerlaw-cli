@@ -109,20 +109,20 @@ output "dns_www_record" {
 # Pub/Sub Outputs
 output "pubsub_topic_name" {
   description = "The name of the Pub/Sub topic"
-  value       = var.pubsub_enabled ? module.pubsub[0].topic_name : null
+  value       = local.pubsub_enabled ? module.pubsub[0].topic_name : null
 }
 
 output "pubsub_topic_id" {
   description = "The ID of the Pub/Sub topic"
-  value       = var.pubsub_enabled ? module.pubsub[0].topic_id : null
+  value       = local.pubsub_enabled ? module.pubsub[0].topic_id : null
 }
 
 output "pubsub_subscription_name" {
   description = "The name of the Pub/Sub subscription"
-  value       = var.pubsub_enabled ? module.pubsub[0].subscription_name : null
+  value       = local.pubsub_enabled ? module.pubsub[0].subscription_name : null
 }
 
 output "pubsub_subscription_id" {
   description = "The ID of the Pub/Sub subscription"
-  value       = var.pubsub_enabled ? module.pubsub[0].subscription_id : null
+  value       = local.pubsub_enabled ? module.pubsub[0].subscription_id : null
 } 

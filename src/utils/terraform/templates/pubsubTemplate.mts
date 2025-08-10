@@ -9,6 +9,5 @@ export function pubsubTemplate(pubsub: EnvironmentConfig['pubsub']): string {
 
   return `
 # Pub/Sub
-topic_name = "${pubsub.topicName}"
-subscription_name = "${pubsub.subscriptionName}"`
+pubsub_topic_name = "${pubsub.topic}"`
 }

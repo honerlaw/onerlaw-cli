@@ -25,6 +25,7 @@ terraform {
 locals {
   cloud_sql_enabled     = var.database_name != null && var.database_user != null
   load_balancer_enabled = var.domain_name != null
+  pubsub_enabled        = var.pubsub_topic_name != null
 }
 
 # Create service account for Terraform backend access
@@ -169,13 +170,15 @@ module "dns" {
 
 # Create Pub/Sub resources (only if enabled)
 module "pubsub" {
-  count  = var.pubsub_enabled ? 1 : 0
+  count  = local.pubsub_enabled ? 1 : 0
   source = "./modules/pubsub"
 
   project_id       = var.project_id
   environment      = var.environment
   environment_name = var.environment_name
-  enabled          = var.pubsub_enabled
+  enabled          = local.pubsub_enabled
+  topic_name       = var.pubsub_topic_name
+  cloud_run_service_account = module.cloud_run.service_account_email
 
   # Optional: Customize Pub/Sub settings
   message_retention_duration = var.pubsub_message_retention_duration

@@ -70,10 +70,10 @@ module "pubsub" {
 |------|-------------|
 | topic_name | The name of the Pub/Sub topic |
 | topic_id | The ID of the Pub/Sub topic |
-| topic_self_link | The self-link of the Pub/Sub topic |
+| topic_project | The project ID of the Pub/Sub topic |
 | subscription_name | The name of the Pub/Sub subscription |
 | subscription_id | The ID of the Pub/Sub subscription |
-| subscription_self_link | The self-link of the Pub/Sub subscription |
+| subscription_project | The project ID of the Pub/Sub subscription |
 | enabled | Whether Pub/Sub resources are enabled |
 
 ## Resource Naming

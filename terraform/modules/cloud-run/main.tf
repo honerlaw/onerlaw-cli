@@ -20,6 +20,19 @@ resource "google_project_iam_member" "cloud_run_secret_accessor" {
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
 }
 
+# Grant Cloud Run service account access to Pub/Sub
+resource "google_project_iam_member" "cloud_run_pubsub_publisher" {
+  project = var.project_id
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
+resource "google_project_iam_member" "cloud_run_pubsub_subscriber" {
+  project = var.project_id
+  role    = "roles/pubsub.subscriber"
+  member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
 # Create Cloud Run service
 resource "google_cloud_run_v2_service" "service" {
   name     = var.service_name

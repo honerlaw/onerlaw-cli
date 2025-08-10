@@ -19,6 +19,18 @@ variable "enabled" {
   default     = false
 }
 
+variable "topic_name" {
+  description = "The name of the Pub/Sub topic (if not provided, will use environment-based naming)"
+  type        = string
+  default     = null
+}
+
+variable "cloud_run_service_account" {
+  description = "The Cloud Run service account email to grant Pub/Sub permissions to"
+  type        = string
+  default     = null
+}
+
 variable "message_retention_duration" {
   description = "How long to retain unacknowledged messages in the subscription's backlog"
   type        = string

@@ -18,8 +18,7 @@ export type LoadedConfig = {
       subdomainNames: string[]
     } | null
     pubsub: {
-      topicName: string
-      subscriptionName: string
+      topic: string
     } | null
   }
   configs: Config

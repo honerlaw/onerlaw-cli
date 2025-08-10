@@ -1,7 +1,7 @@
 # Create Pub/Sub topic
 resource "google_pubsub_topic" "topic" {
   count   = var.enabled ? 1 : 0
-  name    = "${var.environment}-${var.environment_name}-topic"
+  name    = var.topic_name != null ? var.topic_name : "${var.environment}-${var.environment_name}-topic"
   project = var.project_id
 
   labels = {
@@ -69,6 +69,28 @@ resource "google_pubsub_subscription_iam_binding" "subscription_iam" {
   subscription = google_pubsub_subscription.subscription[0].name
   role         = "roles/pubsub.subscriber"
   members      = [each.value]
+
+  depends_on = [google_pubsub_subscription.subscription]
+}
+
+# Automatically grant Cloud Run service account publisher access to the topic
+resource "google_pubsub_topic_iam_binding" "cloud_run_topic_publisher" {
+  count  = var.enabled && var.cloud_run_service_account != null ? 1 : 0
+  project = var.project_id
+  topic   = google_pubsub_topic.topic[0].name
+  role    = "roles/pubsub.publisher"
+  members = ["serviceAccount:${var.cloud_run_service_account}"]
+
+  depends_on = [google_pubsub_topic.topic]
+}
+
+# Automatically grant Cloud Run service account subscriber access to the subscription
+resource "google_pubsub_subscription_iam_binding" "cloud_run_subscription_subscriber" {
+  count  = var.enabled && var.cloud_run_service_account != null ? 1 : 0
+  project      = var.project_id
+  subscription = google_pubsub_subscription.subscription[0].name
+  role         = "roles/pubsub.subscriber"
+  members      = ["serviceAccount:${var.cloud_run_service_account}"]
 
   depends_on = [google_pubsub_subscription.subscription]
 }

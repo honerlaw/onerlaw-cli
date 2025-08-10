@@ -6,7 +6,7 @@ export async function getPubsub(
 ): Promise<EnvironmentConfig['pubsub']> {
   if (existingPubsub) {
     const wantsToModify = await confirm(
-      `Current pubsub config: topic: ${existingPubsub.topicName}, subscription: ${existingPubsub.subscriptionName}. Do you want to modify it?`
+      `Current pubsub config: topic: ${existingPubsub.topic}. Do you want to modify it?`
     )
 
     if (!wantsToModify) {
@@ -24,10 +24,8 @@ export async function getPubsub(
   }
 
   const topicName = await input('Enter topic name:')
-  const subscriptionName = await input('Enter subscription name:')
 
   return {
-    topicName,
-    subscriptionName,
+    topic: topicName,
   }
 }

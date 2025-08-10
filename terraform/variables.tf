@@ -110,10 +110,10 @@ variable "subdomain_names" {
 }
 
 # Pub/Sub Variables
-variable "pubsub_enabled" {
-  description = "Whether to enable Pub/Sub resources"
-  type        = bool
-  default     = false
+variable "pubsub_topic_name" {
+  description = "The name of the Pub/Sub topic (if not provided, will use environment-based naming)"
+  type        = string
+  default     = null
 }
 
 variable "pubsub_message_retention_duration" {
