@@ -75,18 +75,6 @@ variable "cloud_run_min_instances" {
   default     = 0
 }
 
-variable "cloud_run_secrets" {
-  description = "List of secrets to mount in Cloud Run service"
-  type = list(object({
-    name        = string
-    secret_name = string
-    version     = string
-  }))
-  default = []
-}
-
-
-
 # Pub/Sub Variables
 variable "pubsub_topic_name" {
   description = "The name of the Pub/Sub topic (if not provided, will use environment-based naming)"
@@ -137,6 +125,11 @@ variable "apps" {
     name            = string
     container_image = string
     port            = optional(number)
+    secrets = optional(list(object({
+      name        = string
+      secret_name = string
+      version     = optional(string, "latest")
+    })))
     dns = optional(object({
       domainName     = string
       subdomainNames = list(string)

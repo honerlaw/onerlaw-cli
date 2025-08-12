@@ -117,7 +117,7 @@ resource "google_cloud_run_v2_service" "service" {
 
       # Add secret environment variables
       dynamic "env" {
-        for_each = var.secrets
+        for_each = var.secrets == null ? [] : var.secrets
         content {
           name = env.value.name
           value_source {

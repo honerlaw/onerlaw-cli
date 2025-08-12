@@ -1,5 +1,8 @@
 import type { EnvironmentConfig } from '@/config/schema.mjs'
 import { getImageFullyQualifiedName } from '@/commands/deploy/getImageFullyQualifiedName.mjs'
+import { buildFullSecretName } from '@/commands/secret/buildFullSecretName.mjs'
+import { checkSecretExists } from '@/commands/secret/checkSecretExists.mjs'
+import { logWarning } from '@/utils/index.mjs'
 
 export async function appsTemplate(
   apps: EnvironmentConfig['apps'],
@@ -37,6 +40,32 @@ export async function appsTemplate(
           `      subdomainNames = [${app.dns.subdomainNames.map(name => `"${name}"`).join(', ')}]`,
           `    }`
         )
+      }
+
+      if (app.secrets && app.secrets.length > 0) {
+        const includedSecrets: string[] = []
+
+        for (const s of app.secrets) {
+          const fullSecretName = buildFullSecretName(
+            environment,
+            environmentName,
+            s.name
+          )
+
+          const exists = await checkSecretExists(fullSecretName)
+          if (!exists) {
+            logWarning(
+              `Secret ${fullSecretName} does not exist. Skipping from tfvars.`
+            )
+            continue
+          }
+
+          includedSecrets.push(`{\n      name = "${s.name}"\n      secret_name = "${fullSecretName}"\n      version = "${s.version ?? 'latest'}"\n    }`)
+        }
+
+        if (includedSecrets.length > 0) {
+          parts.push(`    secrets = [\n${includedSecrets.join(',\n')}\n    ]`)
+        }
       }
 
       parts.push(`  }`)

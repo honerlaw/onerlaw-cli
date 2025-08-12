@@ -79,10 +79,36 @@ export async function getApps(
       dns = { domainName, subdomainNames }
     }
 
+    // Secrets prompt per app
+    const wantsSecrets = await select(
+      'Add Secret Manager env vars for this app?',
+      [
+        { name: 'Yes', value: true },
+        { name: 'No', value: false },
+      ]
+    )
+
+    let secrets: { name: string; version?: string }[] | undefined
+    if (wantsSecrets) {
+      secrets = []
+      let addMoreSecrets = true
+      while (addMoreSecrets) {
+        const envName = await input('Enter env var name (e.g. API_KEY):')
+        const versionInput = await input('Enter secret version (default: latest):')
+        const version = versionInput && versionInput.trim().length > 0 ? versionInput.trim() : undefined
+        secrets.push({ name: envName, ...(version ? { version } : {}) })
+        addMoreSecrets = await select('Add another secret?', [
+          { name: 'Yes', value: true },
+          { name: 'No', value: false },
+        ])
+      }
+    }
+
     apps.push({
       name: appName,
       ...(port && { port }),
       ...(dns && { dns }),
+      ...(secrets && { secrets }),
     })
 
     addMore = await select('Add another app?', [

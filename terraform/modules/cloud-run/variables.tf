@@ -102,7 +102,7 @@ variable "secrets" {
   type = list(object({
     name        = string
     secret_name = string
-    version     = string
+    version     = optional(string, "latest")
   }))
   default = []
 }

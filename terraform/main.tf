@@ -137,7 +137,7 @@ module "cloud_run_services" {
   database_user                     = var.database_user
   database_password_secret_name     = local.cloud_sql_enabled ? module.cloud_sql[0].database_password_secret_name : null
   vpc_connector_name                = module.networking.vpc_connector_name
-  secrets                           = var.cloud_run_secrets
+  secrets                           = coalesce(var.apps[count.index].secrets, [])
 
   depends_on = [google_project_service.required_apis, module.networking]
 }
