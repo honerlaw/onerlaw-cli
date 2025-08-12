@@ -60,7 +60,9 @@ export async function appsTemplate(
             continue
           }
 
-          includedSecrets.push(`{\n      name = "${s.name}"\n      secret_name = "${fullSecretName}"\n      version = "${s.version ?? 'latest'}"\n    }`)
+          includedSecrets.push(
+            `{\n      name = "${s.name}"\n      secret_name = "${fullSecretName}"\n      version = "${s.version ?? 'latest'}"\n    }`
+          )
         }
 
         if (includedSecrets.length > 0) {

@@ -88,15 +88,20 @@ export async function getApps(
       ]
     )
 
-    let secrets: { name: string; version?: string }[] | undefined
+    let secrets: { name: string; version: string }[] | undefined
     if (wantsSecrets) {
       secrets = []
       let addMoreSecrets = true
       while (addMoreSecrets) {
         const envName = await input('Enter env var name (e.g. API_KEY):')
-        const versionInput = await input('Enter secret version (default: latest):')
-        const version = versionInput && versionInput.trim().length > 0 ? versionInput.trim() : undefined
-        secrets.push({ name: envName, ...(version ? { version } : {}) })
+        const versionInput = await input(
+          'Enter secret version (default: latest):'
+        )
+        const version =
+          versionInput && versionInput.trim().length > 0
+            ? versionInput.trim()
+            : undefined
+        secrets.push({ name: envName, version: version ?? 'latest' })
         addMoreSecrets = await select('Add another secret?', [
           { name: 'Yes', value: true },
           { name: 'No', value: false },
