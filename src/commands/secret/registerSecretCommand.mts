@@ -3,6 +3,7 @@ import { logSuccess, logError } from '@/utils/index.mjs'
 import { secretAction } from './secretAction.mjs'
 import { type SecretOptions } from './types.mjs'
 import { loadConfigFromPrompt } from '@/config/loadConfigFromPrompt.mjs'
+import { registerSecretDestroyCommand } from './destroy/registerSecretDestroyCommand.mjs'
 
 type SecretCommandOptions = Pick<
   SecretOptions,
@@ -10,9 +11,9 @@ type SecretCommandOptions = Pick<
 > & { envFile?: string }
 
 export function registerSecretCommand(program: Command): void {
-  program
+  const secretCmd = program
     .command('secret')
-    .description('Create or update a Google Cloud secret')
+    .description('Manage Google Cloud secrets')
     .option(
       '-s, --secret-name <secret-name>',
       'Name of the secret (without environment prefix)'
@@ -49,4 +50,6 @@ export function registerSecretCommand(program: Command): void {
         process.exit(1)
       }
     })
+
+  registerSecretDestroyCommand(secretCmd)
 }
