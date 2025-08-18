@@ -1,12 +1,13 @@
 import { logSuccess, logWarning, runCommand } from '@/utils/index.mjs'
-import { buildSecretPrefix } from '@/commands/secret/buildSecretPrefix.mjs'
+import { buildSecretPrefix } from '@/utils/secret/buildSecretPrefix.mjs'
 import { type LoadedConfig } from '@/config/index.mjs'
 
 export async function deletePrefixedSecrets(
   config: LoadedConfig
 ): Promise<void> {
   try {
-    const prefix = buildSecretPrefix(config)
+    const { environment, environmentName } = config.selection
+    const prefix = buildSecretPrefix(environment, environmentName)
     logWarning(`Deleting secrets with prefix: ${prefix}`)
 
     const output = await runCommand(

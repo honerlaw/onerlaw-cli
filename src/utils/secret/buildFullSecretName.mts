@@ -1,4 +1,4 @@
-import { SECRET_NAME_SEPARATOR } from './constants.mjs'
+import { SECRET_NAME_SEPARATOR } from '@/commands/secret/constants.mjs'
 
 export function buildFullSecretName(
   environment: string,

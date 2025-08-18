@@ -1,6 +1,6 @@
 import { logSuccess, logError } from '@/utils/index.mjs'
 import { type SecretOptions } from './types.mjs'
-import { buildFullSecretName } from './buildFullSecretName.mjs'
+import { buildFullSecretName } from '@/utils/secret/buildFullSecretName.mjs'
 import { setGcloudProject } from '@/utils/index.mjs'
 import { createOrUpdateSecret } from './createOrUpdateSecret.mjs'
 import { parseEnvFile } from './parseEnvFile.mjs'

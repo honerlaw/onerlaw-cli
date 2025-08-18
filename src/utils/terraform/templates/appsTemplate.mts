@@ -1,8 +1,9 @@
 import type { EnvironmentConfig } from '@/config/schema.mjs'
 import { getImageFullyQualifiedName } from '@/commands/deploy/getImageFullyQualifiedName.mjs'
-import { buildFullSecretName } from '@/commands/secret/buildFullSecretName.mjs'
 import { checkSecretExists } from '@/commands/secret/checkSecretExists.mjs'
 import { logWarning } from '@/utils/index.mjs'
+import { listPrefixedSecrets } from '@/utils/secret/listPrefixedSecrets.mjs'
+import { buildSecretPrefix } from '@/utils/secret/buildSecretPrefix.mjs'
 
 export async function appsTemplate(
   apps: EnvironmentConfig['apps'],
@@ -42,26 +43,23 @@ export async function appsTemplate(
         )
       }
 
-      if (app.secrets && app.secrets.length > 0) {
+      const prefix = buildSecretPrefix(environment, environmentName)
+      const fullSecretNames = await listPrefixedSecrets(prefix)
+
+      if (fullSecretNames.length > 0) {
         const includedSecrets: string[] = []
-
-        for (const s of app.secrets) {
-          const fullSecretName = buildFullSecretName(
-            environment,
-            environmentName,
-            s.name
-          )
-
-          const exists = await checkSecretExists(fullSecretName)
+        for (const fullName of fullSecretNames) {
+          const exists = await checkSecretExists(fullName)
           if (!exists) {
             logWarning(
-              `Secret ${fullSecretName} does not exist. Skipping from tfvars.`
+              `Secret ${fullName} does not exist. Skipping from tfvars.`
             )
             continue
           }
 
+          const shortName = fullName.substring(prefix.length)
           includedSecrets.push(
-            `{\n      name = "${s.name}"\n      secret_name = "${fullSecretName}"\n      version = "${s.version ?? 'latest'}"\n    }`
+            `{\n      name = "${shortName}"\n      secret_name = "${fullName}"\n      version = "latest"\n    }`
           )
         }
 

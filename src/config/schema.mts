@@ -25,20 +25,6 @@ export const EnvironmentConfigSchema = z
           .object({
             name: z.string().min(1, 'App name is required'),
             port: z.number().int().positive().optional(),
-            secrets: z
-              .array(
-                z
-                  .object({
-                    name: z.string().min(1, 'Secret env var name is required'),
-                    version: z
-                      .string()
-                      .min(1, 'Secret version is required')
-                      .optional()
-                      .default('latest'),
-                  })
-                  .strict()
-              )
-              .optional(),
             dns: z
               .object({
                 domainName: z.string().min(1, 'Domain name is required'),
