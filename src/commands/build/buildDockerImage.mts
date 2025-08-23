@@ -26,5 +26,8 @@ export async function buildDockerImage(
 
   logSuccess('Building Docker image...')
   const commandOptions = npmToken ? { env: { NPM_TOKEN: npmToken } } : {}
+
+  console.log('commandOptions', commandOptions)
+
   await runCommand('docker', args, commandOptions)
 }
