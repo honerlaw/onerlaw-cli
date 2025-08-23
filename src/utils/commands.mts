@@ -12,7 +12,7 @@ export async function runCommand(
 ): Promise<string | void> {
   const execaOptions: Options = {
     stdio: captureOutput ? 'pipe' : 'inherit',
-    shell: true,
+    shell: false,
     ...options,
   }
 

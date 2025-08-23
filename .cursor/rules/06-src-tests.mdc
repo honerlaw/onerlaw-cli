@@ -1,0 +1,36 @@
+---
+globs: src/**/*
+alwaysApply: false
+---
+## Testing standards for files under `src/`
+
+- **Use built-in Node libraries only**: All tests in `src/` must use `node:test` for the runner and `node:assert` (prefer `node:assert/strict`) for assertions. Do not use Jest or other testing frameworks/APIs (e.g., no `expect`, `describe`, or `it` from Jest).
+- **No module-level setup state**: Do not declare variables at the module level for test setup. Each test must obtain its own fresh setup.
+- **Use a `harness()` factory**: Define a `harness()` function in each test file (or per suite) that constructs and returns all setup objects/values needed by a test. Each test calls `harness()` inside the test body.
+- **Isolation**: `harness()` must create new instances/resources for each call to avoid cross-test interference. Prefer explicit cleanup within each test or `t.after` hooks.
+
+Example (TypeScript/ESM):
+
+```ts
+import test from 'node:test'
+import assert from 'node:assert/strict'
+
+// No module-level mutable state used for tests
+
+function harness() {
+	// Build fresh setup for each test run
+	const input = 2
+	const double = (n: number) => n * 2
+	return { input, double }
+}
+
+test('double returns expected value', async (t) => {
+	const { input, double } = harness()
+	assert.equal(double(input), 4)
+})
+```
+
+Notes:
+- **Only** use `test`/`t` APIs from `node:test`. Use subtests with `t.test` as needed.
+- Prefer `assert.strict` semantics (`node:assert/strict`).
+- Keep tests independent; avoid shared caches/singletons unless reset per `harness()`.

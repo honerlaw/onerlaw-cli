@@ -44,7 +44,7 @@ export async function appsTemplate(
       }
 
       const prefix = buildSecretPrefix(environment, environmentName)
-      const fullSecretNames = await listPrefixedSecrets(prefix)
+      const fullSecretNames = await listPrefixedSecrets(prefix, project)
 
       if (fullSecretNames.length > 0) {
         const includedSecrets: string[] = []

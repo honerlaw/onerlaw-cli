@@ -1,10 +1,21 @@
-import { runCommand } from '@/utils/index.mjs'
+import { runCommand, setGcloudProject } from '@/utils/index.mjs'
 
-export async function listPrefixedSecrets(prefix: string): Promise<string[]> {
+export async function listPrefixedSecrets(
+  prefix: string,
+  project?: string
+): Promise<string[]> {
   try {
+    if (project) {
+      await setGcloudProject(project)
+    }
     const output = await runCommand(
       'gcloud',
-      ['secrets', 'list', '--format=value(name)'],
+      [
+        'secrets',
+        'list',
+        '--format=value(name)',
+        ...(project ? ['--project', project] : []),
+      ],
       {},
       true
     )
