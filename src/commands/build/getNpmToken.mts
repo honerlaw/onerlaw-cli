@@ -8,7 +8,7 @@ export async function getNpmToken(): Promise<string | null> {
     const npmrcContent = await readFile(npmrcPath)
     const tokenLine = npmrcContent
       .split('\n')
-      .find(line => line.startsWith(NPMRC_AUTH_TOKEN_PREFIX))
+      .find(line => line.indexOf(NPMRC_AUTH_TOKEN_PREFIX) !== -1)
 
     console.log('tokenLine', tokenLine, npmrcContent, npmrcPath)
 
