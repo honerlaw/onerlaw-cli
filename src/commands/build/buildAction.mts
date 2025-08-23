@@ -1,16 +1,16 @@
 import { logError, logSuccess } from '../../utils/index.mjs'
 import {
   DEFAULT_IMAGE_NAME,
-  DEFAULT_TAG,
   DEFAULT_DOCKERFILE_PATH,
   DEFAULT_CONTEXT_PATH,
   GCR_HOSTNAME,
 } from './constants.mjs'
 import { BuildPublishOptions } from './types.mjs'
-import { getNpmToken } from './getNpmToken.mjs'
+import { getNpmToken } from '@/utils/image/getNpmToken.mjs'
 import { configureDockerAuth } from './configureDockerAuth.mjs'
 import { buildDockerImage } from './buildDockerImage.mjs'
 import { pushDockerImage } from './pushDockerImage.mjs'
+import { getNextImageTag } from '@/utils/image/getNextImageTag.mjs'
 
 export async function buildAction(options: BuildPublishOptions): Promise<void> {
   const {
@@ -18,7 +18,7 @@ export async function buildAction(options: BuildPublishOptions): Promise<void> {
     environment,
     environmentName,
     imageName = DEFAULT_IMAGE_NAME,
-    tag = DEFAULT_TAG,
+    tag,
     dockerfilePath = DEFAULT_DOCKERFILE_PATH,
     contextPath = DEFAULT_CONTEXT_PATH,
     noCache = false,
@@ -30,7 +30,13 @@ export async function buildAction(options: BuildPublishOptions): Promise<void> {
     )
 
     const registryName = `${environment}-${environmentName}`
-    const fullImageName = `${GCR_HOSTNAME}/${project}/${registryName}/${imageName}:${tag}`
+
+    // Get the next available numeric tag if no tag was provided
+    const imageTag =
+      tag ||
+      (await getNextImageTag(project, registryName, imageName, GCR_HOSTNAME))
+
+    const fullImageName = `${GCR_HOSTNAME}/${project}/${registryName}/${imageName}:${imageTag}`
 
     logSuccess(`Full image name: ${fullImageName}`)
 

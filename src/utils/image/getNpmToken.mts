@@ -1,6 +1,6 @@
 import { readFile, resolvePath } from '@/utils/index.mjs'
 import os from 'os'
-import { NPMRC_AUTH_TOKEN_PREFIX } from './constants.mjs'
+import { NPMRC_AUTH_TOKEN_PREFIX } from '@/commands/build/constants.mjs'
 
 export async function getNpmToken(): Promise<string | null> {
   try {

@@ -1,5 +1,5 @@
 import type { EnvironmentConfig } from '@/config/schema.mjs'
-import { getImageFullyQualifiedName } from '@/commands/deploy/getImageFullyQualifiedName.mjs'
+import { getImageFullyQualifiedName } from '@/utils/image/getImageFullyQualifiedName.mjs'
 import { checkSecretExists } from '@/commands/secret/checkSecretExists.mjs'
 import { logWarning } from '@/utils/index.mjs'
 import { listPrefixedSecrets } from '@/utils/secret/listPrefixedSecrets.mjs'

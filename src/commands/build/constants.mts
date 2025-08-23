@@ -1,6 +1,6 @@
 // BuildPublish constants
 export const DEFAULT_IMAGE_NAME = 'app-server'
-export const DEFAULT_TAG = 'latest'
+export const DEFAULT_TAG = '1'
 export const DEFAULT_DOCKERFILE_PATH = 'Dockerfile'
 export const DEFAULT_CONTEXT_PATH = '.'
 export const GCR_HOSTNAME = 'us-central1-docker.pkg.dev'
