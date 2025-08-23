@@ -10,7 +10,9 @@ export async function buildDockerImage(
 ): Promise<void> {
   const args = [
     'build',
-    ...(npmToken ? (['--secret', `id=${NPM_TOKEN_SECRET_ID},env=NPM_TOKEN`] as const) : []),
+    ...(npmToken
+      ? (['--secret', `id=${NPM_TOKEN_SECRET_ID},env=NPM_TOKEN`] as const)
+      : []),
     '--platform',
     DOCKER_PLATFORM,
     '-f',
