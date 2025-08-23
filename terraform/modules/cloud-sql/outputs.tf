@@ -23,6 +23,11 @@ output "database_password_secret_name" {
   value       = google_secret_manager_secret.database_password.secret_id
 }
 
+output "database_url_secret_name" {
+  description = "The name of the Secret Manager secret containing the full DATABASE_URL"
+  value       = google_secret_manager_secret.database_url.secret_id
+}
+
 
 
  

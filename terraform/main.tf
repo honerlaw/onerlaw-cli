@@ -136,6 +136,7 @@ module "cloud_run_services" {
   database_name                     = var.database_name
   database_user                     = var.database_user
   database_password_secret_name     = local.cloud_sql_enabled ? module.cloud_sql[0].database_password_secret_name : null
+  database_url_secret_name          = local.cloud_sql_enabled ? module.cloud_sql[0].database_url_secret_name : null
   vpc_connector_name                = module.networking.vpc_connector_name
   secrets                           = coalesce(var.apps[count.index].secrets, [])
 

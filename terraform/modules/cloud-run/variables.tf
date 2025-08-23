@@ -116,4 +116,15 @@ variable "database_password_secret_name" {
     condition     = !var.cloud_sql_enabled || var.database_password_secret_name != null
     error_message = "database_password_secret_name is required when cloud_sql_enabled is true."
   }
+}
+
+variable "database_url_secret_name" {
+  description = "The name of the Secret Manager secret containing the full DATABASE_URL"
+  type        = string
+  default     = null
+
+  validation {
+    condition     = !var.cloud_sql_enabled || var.database_url_secret_name != null
+    error_message = "database_url_secret_name is required when cloud_sql_enabled is true."
+  }
 } 

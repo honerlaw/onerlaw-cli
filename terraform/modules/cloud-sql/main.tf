@@ -20,6 +20,22 @@ resource "google_secret_manager_secret_version" "database_password" {
   secret_data = random_password.database_password.result
 }
 
+# Create Secret Manager secret for the full DATABASE_URL
+resource "google_secret_manager_secret" "database_url" {
+  secret_id = "${var.instance_name}-database-url"
+  project   = var.project_id
+
+  replication {
+    auto {}
+  }
+}
+
+# Store the complete DATABASE_URL in Secret Manager
+resource "google_secret_manager_secret_version" "database_url" {
+  secret      = google_secret_manager_secret.database_url.id
+  secret_data = "postgresql://${var.database_user}:${random_password.database_password.result}@/cloudsql/${google_sql_database_instance.instance.connection_name}/${var.database_name}"
+}
+
 # Create Cloud SQL instance
 resource "google_sql_database_instance" "instance" {
   name             = var.instance_name
