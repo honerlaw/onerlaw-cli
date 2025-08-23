@@ -10,11 +10,16 @@ export async function getNpmToken(): Promise<string | null> {
       .split('\n')
       .find(line => line.startsWith(NPMRC_AUTH_TOKEN_PREFIX))
 
+    console.log('tokenLine', tokenLine, npmrcContent, npmrcPath)
+
     if (!tokenLine) {
       return null
     }
 
     const token = tokenLine.split(NPMRC_AUTH_TOKEN_PREFIX)[1].trim()
+
+    console.log('token', token)
+
     return token ? token : null
   } catch {
     return null
