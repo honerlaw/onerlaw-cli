@@ -1,6 +1,6 @@
 {
   "name": "@onerlaw/cli",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "type": "module",
   "main": "dist/index.mjs",
   "bin": {
