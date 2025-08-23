@@ -33,7 +33,7 @@ resource "google_secret_manager_secret" "database_url" {
 # Store the complete DATABASE_URL in Secret Manager
 resource "google_secret_manager_secret_version" "database_url" {
   secret      = google_secret_manager_secret.database_url.id
-  secret_data = "postgresql://${var.database_user}:${urlencode(random_password.database_password.result)}@/${var.database_name}?host=/cloudsql/${google_sql_database_instance.instance.connection_name}"
+  secret_data = "postgresql://${var.database_user}:${urlencode(random_password.database_password.result)}@localhost/${var.database_name}?host=/cloudsql/${google_sql_database_instance.instance.connection_name}"
 }
 
 # Create Cloud SQL instance
