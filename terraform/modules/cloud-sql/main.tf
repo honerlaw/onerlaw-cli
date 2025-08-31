@@ -77,6 +77,8 @@ resource "google_sql_database" "database" {
   name     = var.database_name
   instance = google_sql_database_instance.instance.name
   project  = var.project_id
+
+  deletion_policy = "ABANDON"
 }
 
 # Create the database user
@@ -85,6 +87,8 @@ resource "google_sql_user" "user" {
   instance = google_sql_database_instance.instance.name
   project  = var.project_id
   password = random_password.database_password.result
+
+  deletion_policy = "ABANDON"
 
   depends_on = [google_sql_database.database]
 }
