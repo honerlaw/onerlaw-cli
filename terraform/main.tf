@@ -34,6 +34,12 @@ locals {
     app.dns != null ? app.dns.subdomainNames : []
   ])
 
+  # Construct full subdomain URLs by combining subdomain names with primary domain
+  full_subdomains = local.primary_domain != null ? [
+    for subdomain in local.all_subdomains :
+    "${subdomain}.${local.primary_domain}"
+  ] : []
+
   # Get all unique domain names from apps with DNS configuration
   all_domains = distinct([
     for app in var.apps :
@@ -164,7 +170,7 @@ module "load_balancer" {
   environment_name   = var.environment_name
   project_id         = var.project_id
   region             = var.region
-  domains            = concat([local.primary_domain], local.all_subdomains)
+  domains            = concat([local.primary_domain], local.full_subdomains)
   cloud_run_services = local.apps_enabled ? module.cloud_run_services[*] : []
   network            = module.networking.vpc_network
 
