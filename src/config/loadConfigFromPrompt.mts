@@ -20,6 +20,7 @@ export type LoadedConfig = {
       | {
           name: string
           port?: number
+          prebuild?: string
           dns?: {
             domainName: string
             subdomainNames: string[]

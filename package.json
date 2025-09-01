@@ -20,6 +20,7 @@
     "start": "node dist/index.mjs",
     "lint": "eslint src/**/* --fix",
     "format": "prettier --write src/**/* && terraform fmt -recursive",
+    "lint:format": "npm run lint && npm run format",
     "lint:check": "eslint src/**/*",
     "format:check": "prettier --check src/**/*",
     "release:major": "npm run validate && npm version major && npm publish && git push origin main && git push --tags",

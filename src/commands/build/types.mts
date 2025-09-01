@@ -7,4 +7,5 @@ export type BuildPublishOptions = {
   dockerfilePath?: string
   contextPath?: string
   noCache?: boolean
+  prebuild?: string
 }

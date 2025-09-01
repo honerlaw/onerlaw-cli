@@ -8,7 +8,7 @@ export async function getApps(
     const appList = existingApps
       .map(
         app =>
-          `${app.name}${app.port ? ` (port: ${app.port})` : ''}${app.dns ? ` [DNS: ${app.dns.subdomainNames.join(', ')}.${app.dns.domainName}]` : ''}`
+          `${app.name}${app.port ? ` (port: ${app.port})` : ''}${app.prebuild ? ` [prebuild: ${app.prebuild}]` : ''}${app.dns ? ` [DNS: ${app.dns.subdomainNames.join(', ')}.${app.dns.domainName}]` : ''}`
       )
       .join(', ')
     const wantsToModify = await confirm(
@@ -79,6 +79,23 @@ export async function getApps(
       dns = { domainName, subdomainNames }
     }
 
+    // Prebuild command prompt
+    const wantsPrebuild = await select(
+      'Do you want to specify a prebuild command for this app?',
+      [
+        { name: 'Yes', value: true },
+        { name: 'No', value: false },
+      ]
+    )
+
+    let prebuild: string | undefined
+    if (wantsPrebuild) {
+      prebuild = await input('Enter prebuild command (e.g. npm run build):')
+      if (prebuild && prebuild.trim().length === 0) {
+        prebuild = undefined
+      }
+    }
+
     // Secrets prompt per app
     const wantsSecrets = await select(
       'Add Secret Manager env vars for this app?',
@@ -112,6 +129,7 @@ export async function getApps(
     apps.push({
       name: appName,
       ...(port && { port }),
+      ...(prebuild && { prebuild }),
       ...(dns && { dns }),
       ...(secrets && { secrets }),
     })

@@ -1,4 +1,4 @@
-import { logError, logSuccess } from '../../utils/index.mjs'
+import { logError, logSuccess, runCommand } from '../../utils/index.mjs'
 import {
   DEFAULT_IMAGE_NAME,
   DEFAULT_DOCKERFILE_PATH,
@@ -22,12 +22,21 @@ export async function buildAction(options: BuildPublishOptions): Promise<void> {
     dockerfilePath = DEFAULT_DOCKERFILE_PATH,
     contextPath = DEFAULT_CONTEXT_PATH,
     noCache = false,
+    prebuild,
   } = options
 
   try {
     logSuccess(
       `Building and publishing Docker image for ${environment} environment...`
     )
+
+    // Run prebuild script if provided
+    if (prebuild) {
+      logSuccess(`Running prebuild script: ${prebuild}`)
+      const [command, ...args] = prebuild.split(' ')
+      await runCommand(command, args)
+      logSuccess('Prebuild script completed successfully')
+    }
 
     const registryName = `${environment}-${environmentName}`
 

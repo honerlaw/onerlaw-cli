@@ -33,6 +33,7 @@ export function registerBuildCommand(program: Command): void {
                 apps.map(app => ({ name: app.name, value: app.name }))
               )
 
+        const selectedApp = apps.find(app => app.name === selectedAppName)
         const imageName = selectedAppName || DEFAULT_IMAGE_NAME
 
         await buildAction({
@@ -40,6 +41,7 @@ export function registerBuildCommand(program: Command): void {
           environment,
           environmentName,
           imageName,
+          prebuild: selectedApp?.prebuild,
         })
 
         logSuccess('Done!')

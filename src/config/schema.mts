@@ -25,6 +25,7 @@ export const EnvironmentConfigSchema = z
           .object({
             name: z.string().min(1, 'App name is required'),
             port: z.number().int().positive().optional(),
+            prebuild: z.string().optional(),
             dns: z
               .object({
                 domainName: z.string().min(1, 'Domain name is required'),
