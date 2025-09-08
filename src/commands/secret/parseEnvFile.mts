@@ -19,7 +19,7 @@ function parseLine(line: string): [string, string] | null {
   }
 
   if (!rawKey) return null
-  return [rawKey, rawValue]
+  return [rawKey.trim(), rawValue.trim()]
 }
 
 export async function parseEnvFile(
