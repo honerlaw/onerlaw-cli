@@ -2,6 +2,7 @@ import { logWarning } from '@/utils/index.mjs'
 import { checkSecretExists } from './checkSecretExists.mjs'
 import { createNewSecret } from './createNewSecret.mjs'
 import { addSecretVersion } from './addSecretVersion.mjs'
+import { disablePreviousSecretVersions } from './disablePreviousSecretVersions.mjs'
 
 export async function createOrUpdateSecret(
   fullSecretName: string,
@@ -16,4 +17,9 @@ export async function createOrUpdateSecret(
   }
 
   await addSecretVersion(fullSecretName, secretValue)
+
+  // Disable all previous versions for security
+  if (secretExists) {
+    await disablePreviousSecretVersions(fullSecretName)
+  }
 }
