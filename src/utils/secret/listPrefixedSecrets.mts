@@ -1,4 +1,4 @@
-import { runCommand, setGcloudProject } from '@/utils/index.mjs'
+import { logSuccess, runCommand, setGcloudProject } from '@/utils/index.mjs'
 
 export async function listPrefixedSecrets(
   prefix: string,
@@ -19,6 +19,8 @@ export async function listPrefixedSecrets(
       {},
       true
     )
+
+    logSuccess(`Output: ${output}`)
 
     const allSecretNames = String(output || '')
       .split('\n')
