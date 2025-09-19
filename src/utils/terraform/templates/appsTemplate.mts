@@ -1,7 +1,7 @@
 import type { EnvironmentConfig } from '@/config/schema.mjs'
 import { getImageFullyQualifiedName } from '@/utils/image/getImageFullyQualifiedName.mjs'
 import { checkSecretExists } from '@/commands/secret/checkSecretExists.mjs'
-import { logWarning } from '@/utils/index.mjs'
+import { logSuccess, logWarning } from '@/utils/index.mjs'
 import { listPrefixedSecrets } from '@/utils/secret/listPrefixedSecrets.mjs'
 import { buildSecretPrefix } from '@/utils/secret/buildSecretPrefix.mjs'
 
@@ -24,6 +24,8 @@ export async function appsTemplate(
         environmentName
       )
 
+      logSuccess(`Container image: ${containerImage}`)
+
       const parts = [
         `  {`,
         `    name = "${app.name}"`,
@@ -45,6 +47,8 @@ export async function appsTemplate(
 
       const prefix = buildSecretPrefix(environment, environmentName)
       const fullSecretNames = await listPrefixedSecrets(prefix, project)
+
+      logSuccess(`Fetched secret names... ${fullSecretNames.length}`)
 
       if (fullSecretNames.length > 0) {
         const includedSecrets: string[] = []
