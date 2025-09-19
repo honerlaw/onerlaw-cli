@@ -1,4 +1,4 @@
-import { runCommand } from '@/utils/commands.mjs'
+import { runGcloudCommand } from '@/utils/commands.mjs'
 import { logSuccess } from '@/utils/index.mjs'
 
 export async function getNextImageTag(
@@ -13,8 +13,7 @@ export async function getNextImageTag(
     logSuccess(`Checking for existing tags in repository: ${repositoryPath}`)
 
     // List all tags for the image repository
-    const result = await runCommand(
-      'gcloud',
+    const result = await runGcloudCommand(
       [
         'artifacts',
         'docker',

@@ -1,4 +1,4 @@
-import { runCommand } from '@/utils/index.mjs'
+import { runGcloudCommand } from '@/utils/index.mjs'
 
 type SecretVersion = {
   name: string
@@ -11,8 +11,7 @@ export async function listSecretVersions(
   fullSecretName: string
 ): Promise<SecretVersion[]> {
   try {
-    const output = await runCommand(
-      'gcloud',
+    const output = await runGcloudCommand(
       ['secrets', 'versions', 'list', fullSecretName, '--format=json'],
       {},
       true

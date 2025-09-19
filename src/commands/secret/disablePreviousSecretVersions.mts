@@ -1,4 +1,4 @@
-import { runCommand, logSuccess } from '@/utils/index.mjs'
+import { logSuccess, runGcloudCommand } from '@/utils/index.mjs'
 import { listSecretVersions } from './listSecretVersions.mjs'
 
 export async function disablePreviousSecretVersions(
@@ -21,7 +21,7 @@ export async function disablePreviousSecretVersions(
     const versionsToDisable = enabledVersions.slice(1)
 
     for (const version of versionsToDisable) {
-      await runCommand('gcloud', [
+      await runGcloudCommand([
         'secrets',
         'versions',
         'disable',

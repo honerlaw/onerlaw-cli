@@ -1,4 +1,9 @@
-import { logSuccess, logWarning, runCommand } from '../index.mjs'
+import {
+  logSuccess,
+  logWarning,
+  runCommand,
+  runGcloudCommand,
+} from '../index.mjs'
 import { getBucketName } from './getBucketName.mjs'
 import { bucketExists } from './bucketExists.mjs'
 
@@ -9,7 +14,7 @@ export async function createBucket(projectId: string): Promise<void> {
 
   try {
     // Set the project
-    await runCommand('gcloud', ['config', 'set', 'project', projectId])
+    await runGcloudCommand(['config', 'set', 'project', projectId])
 
     // Check if bucket already exists
     const exists = await bucketExists(bucketName)

@@ -1,7 +1,7 @@
 import {
   logSuccess,
   logWarning,
-  runCommand,
+  runGcloudCommand,
   setGcloudProject,
 } from '@/utils/index.mjs'
 import { buildSecretPrefix } from '@/utils/secret/buildSecretPrefix.mjs'
@@ -17,8 +17,7 @@ export async function deletePrefixedSecrets(
     const prefix = buildSecretPrefix(environment, environmentName)
     logWarning(`Deleting secrets with prefix: ${prefix}`)
 
-    const output = await runCommand(
-      'gcloud',
+    const output = await runGcloudCommand(
       ['secrets', 'list', '--format=value(name)', '--project', project],
       {},
       true
@@ -43,7 +42,7 @@ export async function deletePrefixedSecrets(
     for (const secretName of secretsToDelete) {
       try {
         logWarning(`Deleting secret: ${secretName}`)
-        await runCommand('gcloud', [
+        await runGcloudCommand([
           'secrets',
           'delete',
           secretName,

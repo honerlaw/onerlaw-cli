@@ -1,4 +1,4 @@
-import { runCommand } from '@/utils/commands.mjs'
+import { runGcloudCommand } from '@/utils/commands.mjs'
 import { logSuccess } from '@/utils/logger.mjs'
 import { DEFAULT_LOG_LIMIT } from './constants.mjs'
 import { formatLogEntry } from './formatLogEntry.mjs'
@@ -19,7 +19,7 @@ export async function fetchRecentLogs(
     'desc',
   ]
 
-  const recentOutput = await runCommand('gcloud', recentArgs, {}, true)
+  const recentOutput = await runGcloudCommand(recentArgs, {}, true)
   try {
     const recentEntries = recentOutput ? JSON.parse(String(recentOutput)) : []
     if (Array.isArray(recentEntries) && recentEntries.length > 0) {

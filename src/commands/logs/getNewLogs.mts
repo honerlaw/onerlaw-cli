@@ -1,4 +1,4 @@
-import { runCommand } from '@/utils/commands.mjs'
+import { runGcloudCommand } from '@/utils/commands.mjs'
 import { formatLogEntry } from './formatLogEntry.mjs'
 import { extractLatestTimestamp } from './extractLatestTimestamp.mjs'
 
@@ -22,7 +22,7 @@ export async function getNewLogs(
     '50',
   ]
 
-  const output = await runCommand('gcloud', tailArgs, {}, true)
+  const output = await runGcloudCommand(tailArgs, {}, true)
 
   try {
     const entries = output ? JSON.parse(String(output)) : []

@@ -1,4 +1,4 @@
-import { runCommand } from '@/utils/commands.mjs'
+import { runGcloudCommand } from '@/utils/commands.mjs'
 
 export async function getLatestImageTag(
   project: string,
@@ -10,8 +10,7 @@ export async function getLatestImageTag(
     const repositoryPath = `${hostname}/${project}/${registryName}/${imageName}`
 
     // List all tags for the image repository
-    const result = await runCommand(
-      'gcloud',
+    const result = await runGcloudCommand(
       [
         'artifacts',
         'docker',

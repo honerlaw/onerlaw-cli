@@ -1,9 +1,9 @@
-import { logSuccess, runCommand } from '@/utils/index.mjs'
+import { logSuccess, runGcloudCommand } from '@/utils/index.mjs'
 import { SECRET_REPLICATION_POLICY } from './constants.mjs'
 
 export async function createNewSecret(fullSecretName: string): Promise<void> {
   logSuccess(`Creating new secret: ${fullSecretName}`)
-  await runCommand('gcloud', [
+  await runGcloudCommand([
     'secrets',
     'create',
     fullSecretName,

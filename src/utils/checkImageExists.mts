@@ -1,9 +1,8 @@
-import { runCommand } from '@/utils/commands.mjs'
+import { runGcloudCommand } from '@/utils/commands.mjs'
 
 export async function checkImageExists(imageName: string): Promise<boolean> {
   try {
-    await runCommand(
-      'gcloud',
+    await runGcloudCommand(
       [
         'artifacts',
         'docker',

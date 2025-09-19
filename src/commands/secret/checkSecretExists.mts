@@ -1,15 +1,10 @@
-import { runCommand } from '@/utils/index.mjs'
+import { runGcloudCommand } from '@/utils/index.mjs'
 
 export async function checkSecretExists(
   fullSecretName: string
 ): Promise<boolean> {
   try {
-    await runCommand(
-      'gcloud',
-      ['secrets', 'describe', fullSecretName],
-      {},
-      true
-    )
+    await runGcloudCommand(['secrets', 'describe', fullSecretName], {}, true)
     return true
   } catch {
     return false

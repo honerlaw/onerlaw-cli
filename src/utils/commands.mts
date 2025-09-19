@@ -1,7 +1,15 @@
 import { execa, type Options } from 'execa'
 
 export async function setGcloudProject(project: string): Promise<void> {
-  await runCommand('gcloud', ['config', 'set', 'project', project], {}, true)
+  await runGcloudCommand(['config', 'set', 'project', project], {}, true)
+}
+
+export async function runGcloudCommand(
+  args: string[] = [],
+  options: Record<string, unknown> = {},
+  captureOutput = false
+): Promise<string | void> {
+  return runCommand('gcloud', [...args, '-q'], options, captureOutput)
 }
 
 export async function runCommand(
