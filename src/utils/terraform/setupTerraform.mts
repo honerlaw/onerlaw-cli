@@ -32,6 +32,8 @@ export async function setupTerraform(config: LoadedConfig): Promise<void> {
     apps
   )
 
+  logSuccess('Writing terraform.tfvars file')
+
   await writeFile(getTfvarsPath(), tfvarsContent)
 
   logSuccess('Terraform configuration files created successfully!')
