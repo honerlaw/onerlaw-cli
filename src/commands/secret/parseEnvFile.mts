@@ -8,7 +8,9 @@ function isCommentOrEmpty(line: string): boolean {
 function parseLine(line: string): [string, string] | null {
   // Supports KEY=VALUE and KEY="VALUE with = and #"
   const idx = line.indexOf('=')
-  if (idx === -1) return null
+  if (idx === -1) {
+    return null
+  }
   const rawKey = line.slice(0, idx).trim()
   let rawValue = line.slice(idx + 1).trim()
 
@@ -18,8 +20,10 @@ function parseLine(line: string): [string, string] | null {
     rawValue = rawValue.slice(1, -1)
   }
 
-  if (!rawKey) return null
-  return [rawKey.trim(), rawValue.trim()]
+  if (!rawKey) {
+    return null
+  }
+  return [rawKey.trim(), rawValue.trim().replace(/\r?\n|\r/g, '')]
 }
 
 export async function parseEnvFile(
@@ -30,9 +34,13 @@ export async function parseEnvFile(
   const result: Record<string, string> = {}
 
   for (const line of lines) {
-    if (isCommentOrEmpty(line)) continue
+    if (isCommentOrEmpty(line)) {
+      continue
+    }
     const parsed = parseLine(line)
-    if (!parsed) continue
+    if (!parsed) {
+      continue
+    }
     const [key, value] = parsed
     result[key] = value
   }
