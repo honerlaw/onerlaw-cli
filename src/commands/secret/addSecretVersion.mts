@@ -15,6 +15,6 @@ export async function addSecretVersion(
     'versions',
     'add',
     fullSecretName,
-    '--data-file=-'
+    '--data-file=-',
   ])
 }
