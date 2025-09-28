@@ -22,8 +22,6 @@ export async function addSecretVersion(
       fullSecretName,
       `--data-file=${filePath}`,
     ])
-  } catch (err) {
-    throw err
   } finally {
     await fs.unlink(filePath)
   }
