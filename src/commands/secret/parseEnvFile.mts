@@ -23,7 +23,7 @@ function parseLine(line: string): [string, string] | null {
   if (!rawKey) {
     return null
   }
-  return [rawKey.trim(), rawValue.trim().replace(/\r?\n|\r/g, '')]
+  return [rawKey.trim(), rawValue.trim()]
 }
 
 export async function parseEnvFile(
