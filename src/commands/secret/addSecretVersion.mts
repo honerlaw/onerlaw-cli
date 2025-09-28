@@ -6,6 +6,6 @@ export async function addSecretVersion(
 ): Promise<void> {
   await runCommand('sh', [
     '-c',
-    `echo "${secretValue}" | gcloud secrets versions add ${fullSecretName} --data-file=-`,
+    `echo -n "${secretValue}" | gcloud secrets versions add ${fullSecretName} --data-file=-`,
   ])
 }
